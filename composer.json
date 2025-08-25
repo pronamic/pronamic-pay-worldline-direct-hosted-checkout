@@ -1,0 +1,66 @@
+{
+	"name": "pronamic/pronamic-pay-worldline-direct-hosted-checkout",
+	"description": "This plugin contains the Pronamic Pay integration for the Worldline Direct Hosted Checkout.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"payment",
+		"pronamic",
+		"pronamic-pay",
+		"rabobank",
+		"worldline",
+		"wordpress",
+		"wordpress-plugin"
+	],
+	"config": {
+		"allow-plugins": {
+			"roots/wordpress-core-installer": true,
+			"automattic/jetpack-autoloader": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"bamarni/composer-bin-plugin": true
+		},
+		"platform": {
+			"php": "8.1"
+		},
+		"platform-check": false,
+		"sort-packages": true,
+		"wp-slug": "pronamic-pay-worldline-direct-hosted-checkout"
+	},
+	"autoload": {
+		"psr-4": {
+			"Pronamic\\WordPress\\Pay\\Gateways\\WorldlineDirectHostedCheckout\\": "src/"
+		}
+	},
+	"require": {
+		"php": ">=8.1",
+		"automattic/jetpack-autoloader": "^2.0 || ^3.0 || ^4.0 || ^5.0",
+		"pronamic/pronamic-wp-updater": "^1.0",
+		"pronamic/wp-http": "^1.2",
+		"wp-pay/core": "^4.26"
+	},
+	"require-dev": {
+		"automattic/wordbless": "^0.6.0",
+		"bamarni/composer-bin-plugin": "^1.8",
+		"pronamic/pronamic-cli": "^1.1",
+		"pronamic/wp-coding-standards": "^2.3",
+		"wp-cli/dist-archive-command": "*",
+		"wp-cli/wp-cli-bundle": "*"
+	},
+	"scripts": {
+		"phpcs": "vendor/bin/phpcs -s -v",
+		"build": "vendor/bin/pronamic wp-build",
+		"phpstan": "vendor/bin/phpstan analyse --memory-limit=-1",
+		"translate": [
+			"@build",
+			"rsync --recursive --delete --verbose ./build/project/languages/ ./languages/"
+		],
+		"version": [
+			"@build"
+		],
+		"release": [
+			"@build",
+			"vendor/bin/pronamic release-to-github",
+			"vendor/bin/pronamic release-to-pronamic"
+		]
+	}
+}

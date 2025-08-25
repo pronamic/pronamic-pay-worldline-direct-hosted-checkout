@@ -1,0 +1,31 @@
+{
+	"name": "@pronamic/pronamic-pay-worldline-direct-hosted-checkout",
+	"version": "1.0.0",
+	"description": "This plugin contains the Pronamic Pay integration for the Worldline Direct Hosted Checkout.",
+	"author": "Pronamic",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"payment",
+		"pronamic",
+		"pronamic-pay",
+		"rabobank",
+		"worldline",
+		"wordpress",
+		"wordpress-plugin"
+	],
+	"homepage": "https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout.git"
+	},
+	"bugs": {
+		"url": "https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/issues"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.29.0",
+		"@wordpress/scripts": "^30.22.0"
+	},
+	"scripts": {
+		"lint:pkg-json": "wp-scripts lint-pkg-json"
+	}
+}
