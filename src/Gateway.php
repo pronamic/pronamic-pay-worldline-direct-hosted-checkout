@@ -10,7 +10,6 @@
 
 namespace Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout;
 
-use Pronamic\WordPress\Pay\Banks\BankAccountDetails;
 use Pronamic\WordPress\Pay\Core\Gateway as PronamicGateway;
 use Pronamic\WordPress\Pay\Core\ModeTrait;
 use Pronamic\WordPress\Pay\Core\PaymentMethod;
