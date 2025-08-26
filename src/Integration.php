@@ -18,6 +18,13 @@ use Pronamic\WordPress\Pay\Core\Gateway as PronamicGateway;
  */
 final class Integration extends AbstractGatewayIntegration {
 	/**
+	 * API host.
+	 *
+	 * @var string
+	 */
+	private string $api_host;
+
+	/**
 	 * Construct iDEAL 2.0 integration.
 	 *
 	 * @param array<string, mixed> $args Arguments.
@@ -27,18 +34,15 @@ final class Integration extends AbstractGatewayIntegration {
 		$args = wp_parse_args(
 			$args,
 			[
-				'id'                     => 'worldline-direct-hosted-checkout',
-				'name'                   => 'Worldline - Direct - Hosted Checkout',
-				'mode'                   => PronamicGateway::MODE_LIVE,
-				'url'                    => \__( 'https://worldline.com/', 'pronamic-pay-worldline-direct-hosted-checkout' ),
-				'product_url'            => \__( 'https://worldline.com/', 'pronamic-pay-worldline-direct-hosted-checkout' ),
-				'manual_url'             => null,
-				'dashboard_url'          => null,
-				'provider'               => null,
-				'app'                    => null,
-				'base_url'               => null,
-				'client'                 => null,
-				'supports'               => [
+				'id'            => 'worldline-direct-hosted-checkout',
+				'name'          => 'Worldline - Direct - Hosted Checkout',
+				'mode'          => PronamicGateway::MODE_LIVE,
+				'url'           => \__( 'https://worldline.com/', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+				'product_url'   => \__( 'https://worldline.com/', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+				'manual_url'    => null,
+				'dashboard_url' => null,
+				'provider'      => null,
+				'supports'      => [
 					'payment_status_request',
 				],
 			]
@@ -47,6 +51,8 @@ final class Integration extends AbstractGatewayIntegration {
 		parent::__construct( $args );
 
 		$this->set_mode( $args['mode'] );
+
+		$this->api_host = $args['api_host'] ?? 'payment.direct.worldline-solutions.com';
 	}
 
 	/**
@@ -115,13 +121,11 @@ final class Integration extends AbstractGatewayIntegration {
 	 * @return Config
 	 */
 	public function get_config( $post_id ) {
-		$mode = $this->get_mode();
-
 		$merchant   = (string) $this->get_meta( $post_id, 'worldline_direct_merchant_id' );
 		$api_key    = (string) $this->get_meta( $post_id, 'worldline_direct_api_key' );
 		$api_secret = (string) $this->get_meta( $post_id, 'worldline_direct_api_secret' );
 
-		$config = new Config( $merchant, $api_key, $api_secret );
+		$config = new Config( $this->api_host, $merchant, $api_key, $api_secret );
 
 		return $config;
 	}

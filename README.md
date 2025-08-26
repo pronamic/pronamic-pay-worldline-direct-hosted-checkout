@@ -11,4 +11,4 @@ This plugin contains the Pronamic Pay integration for the Worldline Direct Hoste
 - https://github.com/wl-online-payments-direct/sdk-php
 - https://github.com/wl-online-payments-direct/sdk-server-examples
 - https://github.com/wl-online-payments-direct/sdk-server-examples/blob/master/server/php/README.md
-
+- https://github.com/wl-online-payments-direct/plugin-woocommerce

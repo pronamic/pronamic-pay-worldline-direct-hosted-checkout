@@ -42,17 +42,19 @@ add_filter(
 		// Worldline - Direct - Hosted Checkout.
 		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout\Integration(
 			[
-				'id'                     => 'worldline-direct-hosted-checkout-test',
-				'name'                   => 'Worldline - Direct - Hosted Checkout - Test',
-				'mode'                   => 'test',
-				'base_domain'            => 'https://digitalroutingservice.awltest.de',
-				'app'                    => 'IDEAL',
-				'client'                 => 'ABN',
-				'initiating_party_label' => __( 'BC number', 'pronamic-pay-worldline-direct-hosted-checkout' ),
-				'merchant_options'       => [
-					'202020'   => 'Test Merchant A',
-					'20202020' => 'Test Merchant B',
-				],
+				'id'       => 'worldline-direct-hosted-checkout-test',
+				'name'     => 'Worldline - Direct - Hosted Checkout - Test',
+				'mode'     => 'test',
+				'api_host' => 'payment.preprod.direct.worldline-solutions.com',
+			]
+		);
+
+		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout\Integration(
+			[
+				'id'       => 'worldline-direct-hosted-checkout',
+				'name'     => 'Worldline - Direct - Hosted Checkout',
+				'mode'     => 'live',
+				'api_host' => 'payment.direct.worldline-solutions.com',
 			]
 		);
 
