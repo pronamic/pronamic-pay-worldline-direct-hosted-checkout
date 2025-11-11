@@ -18,6 +18,13 @@ use Pronamic\WordPress\Pay\Core\Gateway as PronamicGateway;
  */
 final class Integration extends AbstractGatewayIntegration {
 	/**
+	 * REST route namespace.
+	 *
+	 * @var string
+	 */
+	const REST_ROUTE_NAMESPACE = 'pronamic-pay/worldline-direct-hosted-checkout/v1';
+
+	/**
 	 * API host.
 	 *
 	 * @var string
