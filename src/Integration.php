@@ -85,9 +85,9 @@ final class Integration extends AbstractGatewayIntegration {
 	/**
 	 * Get settings fields.
 	 *
-	 * @return array<int, array<string, mixed>>>
+	 * @return array<int, array<string, mixed>>
 	 */
-	public function get_settings_fields() {
+	public function get_settings_fields(): array {
 		$fields = parent::get_settings_fields();
 
 		// Merchant ID.

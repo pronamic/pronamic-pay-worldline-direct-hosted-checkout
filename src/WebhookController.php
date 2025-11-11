@@ -60,10 +60,10 @@ class WebhookController {
 	/**
 	 * REST API webhook handler.
 	 *
-	 * @param WP_REST_Request $request Request.
-	 * @return object
+	 * @param WP_REST_Request<array<string, mixed>> $request Request.
+	 * @return WP_REST_Response
 	 */
-	private function rest_api_webhook( WP_REST_Request $request ) {
+	private function rest_api_webhook( WP_REST_Request $request ): WP_REST_Response {
 		/**
 		 * Result.
 		 *

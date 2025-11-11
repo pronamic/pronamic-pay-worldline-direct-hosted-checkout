@@ -27,10 +27,10 @@ final class PaymentResponse {
 	/**
 	 * From array.
 	 *
-	 * @param array $data Data.
+	 * @param array<string, mixed> $data Data.
 	 * @return self
 	 */
-	public static function from_array( $data ): self {
+	public static function from_array( array $data ): self {
 		$response = new self();
 
 		if ( \array_key_exists( 'id', $data ) ) {
