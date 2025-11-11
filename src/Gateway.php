@@ -101,7 +101,7 @@ final class Gateway extends PronamicGateway {
 
 		$client = new Client( $this->config );
 
-		$response = $client->get_hosted_checkout( $hosted_checkout_id );
+		$response = $client->get_hosted_checkout_status( $hosted_checkout_id );
 
 		switch ( $response->status ) {
 			case HostedCheckoutStatus::CancelledByConsumer:

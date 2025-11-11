@@ -182,13 +182,13 @@ final class Client {
 	}
 
 	/**
-	 * Get hosted checkout.
+	 * Get hosted checkout status.
 	 *
 	 * @param string $hosted_checkout_id Hosted checkout ID.
 	 * @return GetHostedCheckoutResponse
 	 * @throws \Exception If the request fails.
 	 */
-	public function get_hosted_checkout( string $hosted_checkout_id ): GetHostedCheckoutResponse {
+	public function get_hosted_checkout_status( string $hosted_checkout_id ): GetHostedCheckoutResponse {
 		$endpoint = \strtr(
 			'/v2/{merchantId}/hostedcheckouts/{hostedCheckoutId}',
 			[
