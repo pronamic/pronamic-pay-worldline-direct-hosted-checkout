@@ -24,21 +24,15 @@ final class Gateway extends PronamicGateway {
 	use ModeTrait;
 
 	/**
-	 * Config.
-	 *
-	 * @var Config
-	 */
-	protected $config;
-
-	/**
 	 * Constructs and initializes an Wordline Open Banking gateway
 	 *
 	 * @param Config $config Config.
 	 */
-	public function __construct( Config $config ) {
+	public function __construct( /**
+     * Config.
+     */
+    protected Config $config ) {
 		parent::__construct();
-
-		$this->config = $config;
 
 		$this->set_method( self::METHOD_HTTP_REDIRECT );
 

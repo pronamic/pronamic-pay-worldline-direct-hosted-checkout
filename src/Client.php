@@ -15,18 +15,15 @@ namespace Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout;
  */
 final class Client {
 	/**
-	 * Config.
-	 *
-	 * @var Config
-	 */
-	private $config;
-
-	/**
 	 * Construct client.
 	 *
 	 * @param Config $config Config.
 	 */
-	public function __construct( Config $config ) {
-		$this->config = $config;
+	public function __construct(
+		/**
+		 * Config.
+		 */
+		private readonly Config $config
+	) {
 	}
 }

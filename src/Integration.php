@@ -29,7 +29,7 @@ final class Integration extends AbstractGatewayIntegration {
 	 *
 	 * @var string
 	 */
-	private string $api_host;
+	private readonly string $api_host;
 
 	/**
 	 * Construct iDEAL 2.0 integration.
@@ -66,7 +66,7 @@ final class Integration extends AbstractGatewayIntegration {
 	 * Setup.
 	 */
 	public function setup() {
-		\add_filter( 'pronamic_gateway_configuration_display_value_' . $this->get_id(), [ $this, 'gateway_configuration_display_value' ], 10, 2 );
+		\add_filter( 'pronamic_gateway_configuration_display_value_' . $this->get_id(), $this->gateway_configuration_display_value( ... ), 10, 2 );
 	}
 
 	/**

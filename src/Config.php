@@ -18,34 +18,6 @@ use Pronamic\WordPress\Pay\Core\GatewayConfig;
  */
 final class Config extends GatewayConfig implements JsonSerializable {
 	/**
-	 * API host.
-	 *
-	 * @var string
-	 */
-	public string $api_host;
-
-	/**
-	 * Merchant ID.
-	 *
-	 * @var string
-	 */
-	public string $merchant_id;
-
-	/**
-	 * API Key.
-	 *
-	 * @var string
-	 */
-	public string $api_key;
-
-	/**
-	 * API Secret.
-	 *
-	 * @var string
-	 */
-	public string $api_secret;
-
-	/**
 	 * Construct config.
 	 *
 	 * @param string $api_host    API Host.
@@ -54,15 +26,23 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 * @param string $api_secret  API Secret.
 	 */
 	public function __construct(
-		string $api_host,
-		string $merchant_id,
-		string $api_key,
-		string $api_secret
+		/**
+		 * API host.
+		 */
+		public string $api_host,
+		/**
+		 * Merchant ID.
+		 */
+		public string $merchant_id,
+		/**
+		 * API Key.
+		 */
+		public string $api_key,
+		/**
+		 * API Secret.
+		 */
+		public string $api_secret
 	) {
-		$this->api_host    = $api_host;
-		$this->merchant_id = $merchant_id;
-		$this->api_key     = $api_key;
-		$this->api_secret  = $api_secret;
 	}
 
 	/**
@@ -73,7 +53,7 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 */
 	public function jsonSerialize(): object {
 		return (object) [
-			'@type'       => __CLASS__,
+			'@type'       => self::class,
 			'api_host'    => $this->api_host,
 			'merchant_id' => $this->merchant_id,
 			'api_key'     => $this->api_key,
