@@ -4,6 +4,7 @@ This plugin contains the Pronamic Pay integration for the Worldline Direct Hoste
 
 ## Links
 
+- https://packagist.org/packages/pronamic/pronamic-pay-worldline-direct-hosted-checkout
 - https://docs.direct.worldline-solutions.com/en/api-reference#tag/HostedCheckout
 - https://docs.direct.worldline-solutions.com/en/migrate/migrate-to-direct/
 - https://docs.direct.worldline-solutions.com/en/migrate/migrate-to-direct/migrate-hosted-checkout
