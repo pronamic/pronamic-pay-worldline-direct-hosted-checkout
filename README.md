@@ -36,13 +36,6 @@ The integration is designed to evolve with updates to both Worldline’s service
 Merchants who process payments through the legacy Ogone or Ingenico solutions, such as the `orderstandard.asp` interface or the *GOPAY* platform, can migrate to the **Worldline Direct – Hosted Checkout** integration.
 This transition ensures continued operation beyond **December 31, 2025**, and provides access to a modern and secure checkout experience aligned with Worldline’s current payment infrastructure.
 
----
-
-**Related Resources**
-
-* [Pronamic Pay – Ingenico (GitHub)](https://github.com/pronamic/wp-pronamic-pay-ingenico)
-* [Worldline Direct API Documentation](https://docs.direct.worldline-solutions.com/en/api-reference#tag/HostedCheckout/operation/CreateHostedCheckoutApi)
-
 ## Links
 
 - https://packagist.org/packages/pronamic/pronamic-pay-worldline-direct-hosted-checkout
