@@ -59,125 +59,17 @@ final class Gateway extends PronamicGateway {
 	}
 
 	/**
-	 * Create string to hash.
-	 *
-	 * @link https://docs.direct.worldline-solutions.com/en/integration/api-developer-guide/authentication#createstringtohash
-	 * @link https://github.com/wl-online-payments-direct/sdk-php/blob/7.0.0/lib/OnlinePayments/Sdk/Authentication/V1HmacAuthenticator.php#L60-L102
-	 * @param string                $http_method  HTTP method.
-	 * @param string                $endpoint     Endpoint.
-	 * @param array<string, string> $headers      Headers.
-	 * @return string
-	 */
-	private function create_string_to_hash( string $http_method, string $endpoint, array $headers ): string {
-		$lines = [];
-
-		$lines[] = $http_method;
-		$lines[] = $headers['Content-Type'] ?? '';
-		$lines[] = $headers['Date'] ?? '';
-
-		$lines[] = $endpoint;
-
-		$value = '';
-
-		foreach ( $lines as $line ) {
-			$value .= $line . "\n";
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Get webhook URL.
-	 *
-	 * @param Payment $payment Payment.
-	 * @return string
-	 */
-	private function get_webhook_url( Payment $payment ) {
-		$path = \strtr(
-			'<namespace>/webhook/<payment_id>',
-			[
-				'<namespace>'  => Integration::REST_ROUTE_NAMESPACE,
-				'<payment_id>' => $payment->get_id(),
-			]
-		);
-
-		$url = \rest_url( $path );
-
-		return $url;
-	}
-
-	/**
 	 * Start
 	 *
 	 * @see PronamicGateway::start()
 	 *
 	 * @param Payment $payment Payment.
+	 * @throws \Exception If the request fails.
 	 */
 	public function start( Payment $payment ) {
 		$client = new Client( $this->config );
 
-		$endpoint = \strtr(
-			'/v2/{merchantId}/hostedcheckouts',
-			[
-				'{merchantId}' => $this->config->merchant_id,
-			]
-		);
-
-		$url = 'https://' . $this->config->api_host . $endpoint;
-
-		$http_method = 'POST';
-
-		$headers = [
-			'Content-Type' => ( 'POST' === $http_method ) ? 'application/json; charset=utf-8' : '',
-			'Date'         => \gmdate( \DATE_RFC1123 ),
-		];
-
-		$string_to_hash = self::create_string_to_hash( $http_method, $endpoint, $headers );
-
-		$hash = \base64_encode( \hash_hmac( 'sha256', $string_to_hash, $this->config->api_secret, true ) );
-
-		$headers['Authorization'] = 'GCS v1HMAC:' . $this->config->api_key . ':' . $hash;
-
-		$test = \wp_remote_request(
-			$url,
-			[
-				'method'  => $http_method,
-				'headers' => $headers,
-				'body'    => \wp_json_encode(
-					[
-						'hostedCheckoutSpecificInput' => [
-							'returnUrl' => $payment->get_return_url(),
-						],
-						'order'                       => [
-							'reference'     => $payment->get_id(),
-							'description'   => 'Order ' . $payment->get_id(),
-							'amountOfMoney' => [
-								'amount'       => $payment->get_total_amount()->get_minor_units(),
-								'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
-							],
-						],
-						'feedbacks'                   => [
-							'webhooksUrls' => [
-								$this->get_webhook_url( $payment ),
-							],
-						],
-					],
-				),
-			]
-		);
-
-		if ( is_wp_error( $test ) ) {
-			throw new \Exception( 'Error: ' . $test->get_error_message() );
-		}
-
-		$response_code = \wp_remote_retrieve_response_code( $test );
-		$response_body = \wp_remote_retrieve_body( $test );
-
-		if ( '200' !== (string) $response_code ) {
-			throw new \Exception( 'Error: ' . $response_body );
-		}
-
-		$response_data = \json_decode( $response_body, true );
+		$response_data = $client->create_hosted_checkout( $payment );
 
 		if ( ! isset( $response_data['redirectUrl'] ) ) {
 			throw new \Exception( 'Error: No redirectUrl in response.' );
@@ -198,7 +90,7 @@ final class Gateway extends PronamicGateway {
 	 *
 	 * @param Payment $payment Payment.
 	 * @return void
-	 * @throws \Exception Throws an execution if private key cannot be read.
+	 * @throws \Exception Throws an exception if the request fails.
 	 */
 	public function update_status( Payment $payment ) {
 		$hosted_checkout_id = (string) $payment->get_meta( 'worldline_hosted_checkout_id' );
@@ -209,51 +101,7 @@ final class Gateway extends PronamicGateway {
 
 		$client = new Client( $this->config );
 
-		$endpoint = \strtr(
-			'/v2/{merchantId}/hostedcheckouts/{hostedCheckoutId}',
-			[
-				'{merchantId}'       => $this->config->merchant_id,
-				'{hostedCheckoutId}' => $hosted_checkout_id,
-			]
-		);
-
-		$url = 'https://' . $this->config->api_host . $endpoint;
-
-		$http_method = 'GET';
-
-		$headers = [
-			'Content-Type' => ( 'POST' === $http_method ) ? 'application/json; charset=utf-8' : '',
-			'Date'         => \gmdate( \DATE_RFC1123 ),
-		];
-
-		$string_to_hash = self::create_string_to_hash( $http_method, $endpoint, $headers );
-
-		$hash = \base64_encode( \hash_hmac( 'sha256', $string_to_hash, $this->config->api_secret, true ) );
-
-		$headers['Authorization'] = 'GCS v1HMAC:' . $this->config->api_key . ':' . $hash;
-
-		$test = \wp_remote_request(
-			$url,
-			[
-				'method'  => $http_method,
-				'headers' => $headers,
-			]
-		);
-
-		if ( is_wp_error( $test ) ) {
-			throw new \Exception( 'Error: ' . $test->get_error_message() );
-		}
-
-		$response_code = \wp_remote_retrieve_response_code( $test );
-		$response_body = \wp_remote_retrieve_body( $test );
-
-		if ( '200' !== (string) $response_code ) {
-			throw new \Exception( 'Error: ' . $response_body );
-		}
-
-		$response_data = \json_decode( $response_body, true );
-
-		$response = GetHostedCheckoutResponse::from_array( $response_data );
+		$response = $client->get_hosted_checkout( $hosted_checkout_id );
 
 		switch ( $response->status ) {
 			case HostedCheckoutStatus::CancelledByConsumer:
@@ -285,7 +133,7 @@ final class Gateway extends PronamicGateway {
 				break;
 		}
 
-		$payment->set_transaction_id( $response->created_payment_output?->payment->id );
+		$payment->set_transaction_id( $response->created_payment_output?->payment?->id );
 
 		$payment->save();
 	}
