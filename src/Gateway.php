@@ -133,7 +133,7 @@ final class Gateway extends PronamicGateway {
 			[
 				'method'  => $http_method,
 				'headers' => $headers,
-				'body'    => \json_encode(
+				'body'    => \wp_json_encode(
 					[
 						'hostedCheckoutSpecificInput' => [
 							'returnUrl' => $payment->get_return_url(),
