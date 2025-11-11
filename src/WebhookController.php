@@ -60,7 +60,8 @@ class WebhookController {
 	/**
 	 * REST API webhook handler.
 	 *
-	 * @param WP_REST_Request<array<string, mixed>> $request Request.
+	 * @param WP_REST_Request $request Request.
+	 * @phpstan-param WP_REST_Request<array<string, mixed>> $request
 	 * @return WP_REST_Response
 	 */
 	private function rest_api_webhook( WP_REST_Request $request ): WP_REST_Response {
