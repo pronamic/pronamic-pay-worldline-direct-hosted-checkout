@@ -3,7 +3,7 @@
  * Pronamic Pay - Worldline - Direct - Hosted Checkout
  *
  * @author    Pronamic
- * @copyright 2024 Pronamic
+ * @copyright 2025 Pronamic
  * @license   GPL-2.0-or-later
  * @package   Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout
  *
@@ -11,9 +11,9 @@
  * Plugin Name:       Pronamic Pay - Worldline - Direct - Hosted Checkout
  * Plugin URI:        https://wp.pronamic.directory/plugins/pronamic-pay-worldline-direct-hosted-checkout/
  * Description:       This plugin contains the Pronamic Pay integration for the Worldline Open Banking Platform and iDEAL 2.0.
- * Version:           1.3.1
+ * Version:           1.0.0
  * Requires at least: 6.2
- * Requires PHP:      8.0
+ * Requires PHP:      8.1
  * Author:            Pronamic
  * Author URI:        https://www.pronamic.eu/
  * Text Domain:       pronamic-pay-worldline-direct-hosted-checkout
