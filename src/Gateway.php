@@ -28,10 +28,12 @@ final class Gateway extends PronamicGateway {
 	 *
 	 * @param Config $config Config.
 	 */
-	public function __construct( /**
-     * Config.
-     */
-    protected Config $config ) {
+	public function __construct(
+		/**
+     	 * Config.
+     	*/
+    	protected Config $config
+	) {
 		parent::__construct();
 
 		$this->set_method( self::METHOD_HTTP_REDIRECT );
