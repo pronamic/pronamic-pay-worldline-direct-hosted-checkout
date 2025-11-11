@@ -30,9 +30,9 @@ final class Gateway extends PronamicGateway {
 	 */
 	public function __construct(
 		/**
-     	 * Config.
-     	*/
-    	protected Config $config
+		 * Config.
+		 */
+		protected Config $config
 	) {
 		parent::__construct();
 
