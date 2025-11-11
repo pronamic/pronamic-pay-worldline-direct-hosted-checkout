@@ -40,12 +40,22 @@ final class Gateway extends PronamicGateway {
 
 		$this->supports = [
 			'payment_status_request',
+			'webhook',
+			'webhook_log',
+			'webhook_no_config',
 		];
 
+		// iDEAL.
 		$ideal_payment_method = new PaymentMethod( PaymentMethods::IDEAL );
 		$ideal_payment_method->set_status( 'active' );
 
 		$this->register_payment_method( $ideal_payment_method );
+
+		// Bancontact.
+		$payment_method_bancontact = new PaymentMethod( PaymentMethods::BANCONTACT );
+		$ideal_payment_method->set_status( 'active' );
+
+		$this->register_payment_method( $payment_method_bancontact );
 	}
 
 	/**
