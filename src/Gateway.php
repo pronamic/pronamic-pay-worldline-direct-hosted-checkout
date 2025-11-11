@@ -69,18 +69,21 @@ final class Gateway extends PronamicGateway {
 	public function start( Payment $payment ) {
 		$client = new Client( $this->config );
 
-		$response_data = $client->create_hosted_checkout( $payment );
+		$response = $client->create_hosted_checkout( $payment );
 
-		if ( ! isset( $response_data['redirectUrl'] ) ) {
+		if ( null !== $response->return_mac ) {
+			$payment->set_meta( 'worldline_return_mac', $response->return_mac );
+		}
+
+		if ( null !== $response->hosted_checkout_id ) {
+			$payment->set_meta( 'worldline_hosted_checkout_id', $response->hosted_checkout_id );
+		}
+
+		if ( null === $response->redirect_url ) {
 			throw new \Exception( 'Error: No redirectUrl in response.' );
 		}
 
-		$redirect_url = $response_data['redirectUrl'];
-
-		$payment->set_meta( 'worldline_return_mac', $response_data['RETURNMAC'] );
-		$payment->set_meta( 'worldline_hosted_checkout_id', $response_data['hostedCheckoutId'] );
-
-		$payment->set_action_url( $redirect_url );
+		$payment->set_action_url( $response->redirect_url );
 
 		$payment->save();
 	}

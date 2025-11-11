@@ -142,10 +142,10 @@ final class Client {
 	 * Create hosted checkout.
 	 *
 	 * @param Payment $payment Payment.
-	 * @return array<string, mixed>
+	 * @return CreateHostedCheckoutResponse
 	 * @throws \Exception If the request fails.
 	 */
-	public function create_hosted_checkout( Payment $payment ): array {
+	public function create_hosted_checkout( Payment $payment ): CreateHostedCheckoutResponse {
 		$endpoint = \strtr(
 			'/v2/{merchantId}/hostedcheckouts',
 			[
@@ -178,7 +178,7 @@ final class Client {
 			throw new \Exception( 'Could not create hosted checkout.' );
 		}
 
-		return $response_data;
+		return CreateHostedCheckoutResponse::from_array( $response_data );
 	}
 
 	/**
