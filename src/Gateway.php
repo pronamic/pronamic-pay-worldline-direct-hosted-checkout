@@ -118,6 +118,9 @@ final class Gateway extends PronamicGateway {
 				'headers' => $headers,
 				'body'    => \json_encode(
 					[
+						'hostedCheckoutSpecificInput' => [
+							'returnUrl' => $payment->get_return_url(),
+						],
 						'order' => [
 							'reference'     => $payment->get_id(),
 							'description'   => 'Order ' . $payment->get_id(),
