@@ -43,6 +43,7 @@
 		"bamarni/composer-bin-plugin": "^1.8",
 		"pronamic/pronamic-cli": "^1.1",
 		"pronamic/wp-coding-standards": "^2.3",
+		"rector/rector": "^2.2",
 		"wp-cli/dist-archive-command": "*",
 		"wp-cli/wp-cli-bundle": "*"
 	},
