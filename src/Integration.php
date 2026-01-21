@@ -3,7 +3,7 @@
  * Integration
  *
  * @author    Pronamic <info@pronamic.eu>
- * @copyright 2005-2025 Pronamic
+ * @copyright 2005-2026 Pronamic
  * @license   GPL-3.0-or-later
  * @package   Pronamic\WordPress\Pay\Gateways\WorldlineDirectHostedCheckout
  */
@@ -90,7 +90,6 @@ final class Integration extends AbstractGatewayIntegration {
 	public function get_settings_fields(): array {
 		$fields = parent::get_settings_fields();
 
-		// Merchant ID.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'Merchant ID', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -99,7 +98,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// API Key.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'API Key', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -108,7 +106,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// API Secret.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'API Secret', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -126,7 +123,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'     => [ 'code' ],
 		];
 
-		// Return.
 		return $fields;
 	}
 
