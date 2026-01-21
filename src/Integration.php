@@ -117,6 +117,15 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
+		$fields[] = [
+			'section'     => 'advanced',
+			'title'       => \__( 'Variant', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'description' => \__( 'You can force the use of a custom template by specifying it in the variant field. This allows you to test out the effect of certain changes to your payment pages in a controlled manner. Please note that you need to specify the filename of the template or customization.', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'meta_key'    => '_pronamic_gateway_worldline_direct_variant',
+			'type'        => 'text',
+			'classes'     => [ 'code' ],
+		];
+
 		// Return.
 		return $fields;
 	}
@@ -133,6 +142,12 @@ final class Integration extends AbstractGatewayIntegration {
 		$api_secret = (string) $this->get_meta( $post_id, 'worldline_direct_api_secret' );
 
 		$config = new Config( $this->api_host, $merchant, $api_key, $api_secret );
+
+		$variant = (string) $this->get_meta( $post_id, 'worldline_direct_variant' );
+
+		if ( '' !== $variant ) {
+			$config->variant = $variant;
+		}
 
 		return $config;
 	}

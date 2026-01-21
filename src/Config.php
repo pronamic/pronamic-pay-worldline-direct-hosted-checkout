@@ -18,6 +18,17 @@ use Pronamic\WordPress\Pay\Core\GatewayConfig;
  */
 final class Config extends GatewayConfig implements JsonSerializable {
 	/**
+	 * Variant.
+	 *
+	 * You can force the use of a custom template by specifying it in the variant field.
+	 * This allows you to test out the effect of certain changes to your payment pages in a controlled manner.
+	 * Please note that you need to specify the filename of the template or customization.
+	 *
+	 * @var string|null
+	 */
+	public ?string $variant;
+
+	/**
 	 * Construct config.
 	 *
 	 * @param string $api_host    API Host.
@@ -58,6 +69,7 @@ final class Config extends GatewayConfig implements JsonSerializable {
 			'merchant_id' => $this->merchant_id,
 			'api_key'     => $this->api_key,
 			'api_secret'  => $this->api_secret,
+			'variant'     => $this->variant,
 		];
 	}
 }
