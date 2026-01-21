@@ -90,7 +90,6 @@ final class Integration extends AbstractGatewayIntegration {
 	public function get_settings_fields(): array {
 		$fields = parent::get_settings_fields();
 
-		// Merchant ID.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'Merchant ID', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -99,7 +98,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// API Key.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'API Key', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -108,7 +106,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// API Secret.
 		$fields[] = [
 			'section'  => 'general',
 			'title'    => \__( 'API Secret', 'pronamic-pay-worldline-direct-hosted-checkout' ),
@@ -117,7 +114,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// Return.
 		return $fields;
 	}
 
