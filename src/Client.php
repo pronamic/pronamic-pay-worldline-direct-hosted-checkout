@@ -153,10 +153,16 @@ final class Client {
 			]
 		);
 
+		$hosted_checkout_specific_input = [
+			'returnUrl' => $payment->get_return_url(),
+		];
+
+		if ( null !== $this->config->variant ) {
+			$hosted_checkout_specific_input['variant'] = $this->config->variant;
+		}
+
 		$data = [
-			'hostedCheckoutSpecificInput' => [
-				'returnUrl' => $payment->get_return_url(),
-			],
+			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
 			'order'                       => [
 				'reference'     => $payment->get_id(),
 				'description'   => 'Order ' . $payment->get_id(),
