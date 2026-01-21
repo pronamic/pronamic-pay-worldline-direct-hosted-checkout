@@ -22,8 +22,8 @@
 		"url": "https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/issues"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.34.0",
-		"@wordpress/scripts": "^30.27.0"
+		"@wordpress/env": "^10.38.0",
+		"@wordpress/scripts": "^31.3.0"
 	},
 	"scripts": {
 		"lint:pkg-json": "wp-scripts lint-pkg-json"
