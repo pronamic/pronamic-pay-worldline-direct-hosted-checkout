@@ -26,7 +26,7 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 *
 	 * @var string|null
 	 */
-	public ?string $variant;
+	public ?string $variant = null;
 
 	/**
 	 * Construct config.
