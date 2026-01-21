@@ -13,7 +13,7 @@
  * Description:       This plugin contains the Pronamic Pay integration for the Worldline Open Banking Platform and iDEAL 2.0.
  * Version:           1.0.0
  * Requires at least: 6.2
- * Requires PHP:      8.1
+ * Requires PHP:      8.2
  * Author:            Pronamic
  * Author URI:        https://www.pronamic.eu/
  * Text Domain:       pronamic-pay-worldline-direct-hosted-checkout
