@@ -1,6 +1,6 @@
 {
 	"name": "@pronamic/pronamic-pay-worldline-direct-hosted-checkout",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "This plugin contains the Pronamic Pay integration for the Worldline Direct Hosted Checkout.",
 	"author": "Pronamic",
 	"license": "GPL-2.0-or-later",
