@@ -219,12 +219,16 @@ final class Client {
 
 			$personal_name = [];
 
-			if ( null !== $name->get_first_name() ) {
-				$personal_name['firstName'] = $name->get_first_name();
+			$first_name = $name->get_first_name();
+
+			if ( null !== $first_name ) {
+				$personal_name['firstName'] = $first_name;
 			}
 
-			if ( null !== $name->get_last_name() ) {
-				$personal_name['surname'] = $name->get_last_name();
+			$last_name = $name->get_last_name();
+
+			if ( null !== $last_name ) {
+				$personal_name['surname'] = $last_name;
 			}
 
 			if ( ! empty( $personal_name ) ) {
@@ -234,15 +238,15 @@ final class Client {
 			}
 		}
 
-		// Contact details (email, phone).
+		// Contact details (email).
 		$contact_details = [];
 
-		if ( null !== $customer && null !== $customer->get_email() ) {
-			$contact_details['emailAddress'] = $customer->get_email();
-		}
+		if ( null !== $customer ) {
+			$email = $customer->get_email();
 
-		if ( null !== $customer && null !== $customer->get_phone() ) {
-			$contact_details['phoneNumber'] = $customer->get_phone();
+			if ( null !== $email ) {
+				$contact_details['emailAddress'] = $email;
+			}
 		}
 
 		if ( ! empty( $contact_details ) ) {
@@ -289,15 +293,23 @@ final class Client {
 		}
 
 		// Locale.
-		if ( null !== $customer && null !== $customer->get_locale() ) {
-			$customer_data['locale'] = $customer->get_locale();
+		if ( null !== $customer ) {
+			$locale = $customer->get_locale();
+
+			if ( null !== $locale ) {
+				$customer_data['locale'] = $locale;
+			}
 		}
 
 		// Device IP address.
-		if ( null !== $customer && null !== $customer->get_ip_address() ) {
-			$customer_data['device'] = [
-				'ipAddress' => $customer->get_ip_address(),
-			];
+		if ( null !== $customer ) {
+			$ip_address = $customer->get_ip_address();
+
+			if ( null !== $ip_address ) {
+				$customer_data['device'] = [
+					'ipAddress' => $ip_address,
+				];
+			}
 		}
 
 		return $customer_data;
