@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added customer data to hosted checkout requests for improved payment information in Worldline interface:
   - Personal information (first name, surname)
-  - Contact details (email address, phone number)
+  - Contact details (email address)
   - Billing address (street, house number, city, postal code, country code)
   - Locale
   - Device IP address

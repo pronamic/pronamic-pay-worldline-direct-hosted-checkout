@@ -213,44 +213,57 @@ final class Client {
 		$customer        = $payment->customer;
 		$billing_address = $payment->billing_address;
 
-		// Personal information (name).
-		if ( null !== $customer && null !== $customer->get_name() ) {
+		// Customer-related data.
+		if ( null !== $customer ) {
+			// Personal information (name).
 			$name = $customer->get_name();
 
-			$personal_name = [];
+			if ( null !== $name ) {
+				$personal_name = [];
 
-			$first_name = $name->get_first_name();
+				$first_name = $name->get_first_name();
 
-			if ( null !== $first_name ) {
-				$personal_name['firstName'] = $first_name;
+				if ( null !== $first_name ) {
+					$personal_name['firstName'] = $first_name;
+				}
+
+				$last_name = $name->get_last_name();
+
+				if ( null !== $last_name ) {
+					$personal_name['surname'] = $last_name;
+				}
+
+				if ( ! empty( $personal_name ) ) {
+					$customer_data['personalInformation'] = [
+						'name' => $personal_name,
+					];
+				}
 			}
 
-			$last_name = $name->get_last_name();
-
-			if ( null !== $last_name ) {
-				$personal_name['surname'] = $last_name;
-			}
-
-			if ( ! empty( $personal_name ) ) {
-				$customer_data['personalInformation'] = [
-					'name' => $personal_name,
-				];
-			}
-		}
-
-		// Contact details (email).
-		$contact_details = [];
-
-		if ( null !== $customer ) {
+			// Contact details (email).
 			$email = $customer->get_email();
 
 			if ( null !== $email ) {
-				$contact_details['emailAddress'] = $email;
+				$customer_data['contactDetails'] = [
+					'emailAddress' => $email,
+				];
 			}
-		}
 
-		if ( ! empty( $contact_details ) ) {
-			$customer_data['contactDetails'] = $contact_details;
+			// Locale.
+			$locale = $customer->get_locale();
+
+			if ( null !== $locale ) {
+				$customer_data['locale'] = $locale;
+			}
+
+			// Device IP address.
+			$ip_address = $customer->get_ip_address();
+
+			if ( null !== $ip_address ) {
+				$customer_data['device'] = [
+					'ipAddress' => $ip_address,
+				];
+			}
 		}
 
 		// Billing address.
@@ -289,26 +302,6 @@ final class Client {
 
 			if ( ! empty( $address ) ) {
 				$customer_data['billingAddress'] = $address;
-			}
-		}
-
-		// Locale.
-		if ( null !== $customer ) {
-			$locale = $customer->get_locale();
-
-			if ( null !== $locale ) {
-				$customer_data['locale'] = $locale;
-			}
-		}
-
-		// Device IP address.
-		if ( null !== $customer ) {
-			$ip_address = $customer->get_ip_address();
-
-			if ( null !== $ip_address ) {
-				$customer_data['device'] = [
-					'ipAddress' => $ip_address,
-				];
 			}
 		}
 
