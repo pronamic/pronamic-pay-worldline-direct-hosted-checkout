@@ -164,11 +164,13 @@ final class Client {
 		$data = [
 			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
 			'order'                       => [
-				'reference'     => $payment->get_id(),
-				'description'   => 'Order ' . $payment->get_id(),
 				'amountOfMoney' => [
 					'amount'       => $payment->get_total_amount()->get_minor_units(),
 					'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
+				],
+				'references'    => [
+					'merchantReference' => $payment->get_id(),
+					'descriptor'        => 'Order ' . $payment->get_id(),
 				],
 			],
 			'feedbacks'                   => [
