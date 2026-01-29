@@ -138,6 +138,9 @@ All code follows **WordPress Coding Standards** with **Pronamic-specific extensi
 - **Constants**: Use `SCREAMING_SNAKE_CASE` naming
 - **Properties/Variables**: Use `snake_case` naming with appropriate visibility
 - **Comments**: Use PHPDoc-style documentation for all public methods and classes
+  - **Avoid redundant comments**: Do not add comments that merely restate what is already obvious from the code itself (e.g., `// Get email` before `$email = $customer->get_email()`). Comments should explain *why* or add meaningful context, not *what*.
+  - Use inline comments only when the code's intent is not immediately clear
+  - Prefer self-documenting code with clear variable and method names over explanatory comments
 - **Indentation**: Tabs (WordPress standard)
 - **Line Length**: Aim for readability, max 100 characters where practical
 - **String Quotes**: Use single quotes in PHP, double quotes for HTML attributes

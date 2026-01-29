@@ -161,18 +161,26 @@ final class Client {
 			$hosted_checkout_specific_input['variant'] = $this->config->variant;
 		}
 
+		$order = [
+			'amountOfMoney' => [
+				'amount'       => $payment->get_total_amount()->get_minor_units(),
+				'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
+			],
+			'references'    => [
+				'merchantReference' => $payment->get_id(),
+				'descriptor'        => 'Order ' . $payment->get_id(),
+			],
+		];
+
+		$customer_data = $this->get_customer_data( $payment );
+
+		if ( ! empty( $customer_data ) ) {
+			$order['customer'] = $customer_data;
+		}
+
 		$data = [
 			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
-			'order'                       => [
-				'amountOfMoney' => [
-					'amount'       => $payment->get_total_amount()->get_minor_units(),
-					'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
-				],
-				'references'    => [
-					'merchantReference' => $payment->get_id(),
-					'descriptor'        => 'Order ' . $payment->get_id(),
-				],
-			],
+			'order'                       => $order,
 			'feedbacks'                   => [
 				'webhooksUrls' => [
 					$this->get_webhook_url( $payment ),
@@ -187,6 +195,91 @@ final class Client {
 		}
 
 		return CreateHostedCheckoutResponse::from_array( $response_data );
+	}
+
+	/**
+	 * Get customer data for order.
+	 *
+	 * Builds customer data object from payment information according to Worldline API spec.
+	 *
+	 * @link https://docs.direct.worldline-solutions.com/en/api-reference#tag/HostedCheckout/operation/CreateHostedCheckout
+	 * @param Payment $payment Payment.
+	 * @return array<string, mixed>
+	 */
+	private function get_customer_data( Payment $payment ): array {
+		$customer_data = [];
+
+		$customer        = $payment->customer;
+		$billing_address = $payment->billing_address;
+
+		if ( null !== $customer ) {
+			$name = $customer->get_name();
+
+			if ( null !== $name ) {
+				$personal_name_data = [
+					'firstName' => $name->get_first_name(),
+					'surname'   => $name->get_last_name(),
+				];
+
+				$personal_name = \array_filter(
+					$personal_name_data,
+					static fn( $value ) => null !== $value && '' !== $value
+				);
+
+				if ( ! empty( $personal_name ) ) {
+					$customer_data['personalInformation'] = [
+						'name' => $personal_name,
+					];
+				}
+			}
+
+			$email = $customer->get_email();
+
+			if ( null !== $email && '' !== $email ) {
+				$customer_data['contactDetails'] = [
+					'emailAddress' => $email,
+				];
+			}
+
+			$locale = $customer->get_locale();
+
+			if ( null !== $locale && '' !== $locale ) {
+				$customer_data['locale'] = $locale;
+			}
+
+			$ip_address = $customer->get_ip_address();
+
+			if ( null !== $ip_address && '' !== $ip_address ) {
+				$customer_data['device'] = [
+					'ipAddress' => $ip_address,
+				];
+			}
+		}
+
+		if ( null !== $billing_address ) {
+			$address_data = [
+				'street'      => $billing_address->get_street_name(),
+				'houseNumber' => $billing_address->get_house_number(),
+				'city'        => $billing_address->get_city(),
+				'zip'         => $billing_address->get_postal_code(),
+				'countryCode' => $billing_address->get_country_code(),
+			];
+
+			$address = \array_filter(
+				$address_data,
+				static fn( $value ) => null !== $value && '' !== $value
+			);
+
+			if ( \array_key_exists( 'houseNumber', $address ) ) {
+				$address['houseNumber'] = (string) $address['houseNumber'];
+			}
+
+			if ( ! empty( $address ) ) {
+				$customer_data['billingAddress'] = $address;
+			}
+		}
+
+		return $customer_data;
 	}
 
 	/**
