@@ -161,18 +161,27 @@ final class Client {
 			$hosted_checkout_specific_input['variant'] = $this->config->variant;
 		}
 
+		$order = [
+			'amountOfMoney' => [
+				'amount'       => $payment->get_total_amount()->get_minor_units(),
+				'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
+			],
+			'references'    => [
+				'merchantReference' => $payment->get_id(),
+				'descriptor'        => 'Order ' . $payment->get_id(),
+			],
+		];
+
+		// Add customer data if available.
+		$customer_data = $this->get_customer_data( $payment );
+
+		if ( ! empty( $customer_data ) ) {
+			$order['customer'] = $customer_data;
+		}
+
 		$data = [
 			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
-			'order'                       => [
-				'amountOfMoney' => [
-					'amount'       => $payment->get_total_amount()->get_minor_units(),
-					'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
-				],
-				'references'    => [
-					'merchantReference' => $payment->get_id(),
-					'descriptor'        => 'Order ' . $payment->get_id(),
-				],
-			],
+			'order'                       => $order,
 			'feedbacks'                   => [
 				'webhooksUrls' => [
 					$this->get_webhook_url( $payment ),
@@ -187,6 +196,111 @@ final class Client {
 		}
 
 		return CreateHostedCheckoutResponse::from_array( $response_data );
+	}
+
+	/**
+	 * Get customer data for order.
+	 *
+	 * Builds customer data object from payment information according to Worldline API spec.
+	 *
+	 * @link https://docs.direct.worldline-solutions.com/en/api-reference#tag/HostedCheckout/operation/CreateHostedCheckout
+	 * @param Payment $payment Payment.
+	 * @return array<string, mixed>
+	 */
+	private function get_customer_data( Payment $payment ): array {
+		$customer_data = [];
+
+		$customer        = $payment->customer;
+		$billing_address = $payment->billing_address;
+
+		// Personal information (name).
+		if ( null !== $customer && null !== $customer->get_name() ) {
+			$name = $customer->get_name();
+
+			$personal_name = [];
+
+			if ( null !== $name->get_first_name() ) {
+				$personal_name['firstName'] = $name->get_first_name();
+			}
+
+			if ( null !== $name->get_last_name() ) {
+				$personal_name['surname'] = $name->get_last_name();
+			}
+
+			if ( ! empty( $personal_name ) ) {
+				$customer_data['personalInformation'] = [
+					'name' => $personal_name,
+				];
+			}
+		}
+
+		// Contact details (email, phone).
+		$contact_details = [];
+
+		if ( null !== $customer && null !== $customer->get_email() ) {
+			$contact_details['emailAddress'] = $customer->get_email();
+		}
+
+		if ( null !== $customer && null !== $customer->get_phone() ) {
+			$contact_details['phoneNumber'] = $customer->get_phone();
+		}
+
+		if ( ! empty( $contact_details ) ) {
+			$customer_data['contactDetails'] = $contact_details;
+		}
+
+		// Billing address.
+		if ( null !== $billing_address ) {
+			$address = [];
+
+			$street_name = $billing_address->get_street_name();
+
+			if ( null !== $street_name ) {
+				$address['street'] = $street_name;
+			}
+
+			$house_number = $billing_address->get_house_number();
+
+			if ( null !== $house_number ) {
+				$address['houseNumber'] = (string) $house_number;
+			}
+
+			$city = $billing_address->get_city();
+
+			if ( null !== $city ) {
+				$address['city'] = $city;
+			}
+
+			$postal_code = $billing_address->get_postal_code();
+
+			if ( null !== $postal_code ) {
+				$address['zip'] = $postal_code;
+			}
+
+			$country_code = $billing_address->get_country_code();
+
+			if ( null !== $country_code ) {
+				$address['countryCode'] = $country_code;
+			}
+
+			if ( ! empty( $address ) ) {
+				$customer_data['billingAddress'] = $address;
+			}
+		}
+
+		// Locale.
+		if ( null !== $customer && null !== $customer->get_locale() ) {
+			$customer_data['locale'] = $customer->get_locale();
+		}
+
+		// Device IP address.
+		if ( null !== $customer && null !== $customer->get_ip_address() ) {
+			$customer_data['device'] = [
+				'ipAddress' => $customer->get_ip_address(),
+			];
+		}
+
+		return $customer_data;
 	}
 
 	/**
