@@ -219,19 +219,15 @@ final class Client {
 			$name = $customer->get_name();
 
 			if ( null !== $name ) {
-				$personal_name = [];
+				$personal_name_data = [
+					'firstName' => $name->get_first_name(),
+					'surname'   => $name->get_last_name(),
+				];
 
-				$first_name = $name->get_first_name();
-
-				if ( null !== $first_name ) {
-					$personal_name['firstName'] = $first_name;
-				}
-
-				$last_name = $name->get_last_name();
-
-				if ( null !== $last_name ) {
-					$personal_name['surname'] = $last_name;
-				}
+				$personal_name = \array_filter(
+					$personal_name_data,
+					static fn( $value ) => null !== $value && '' !== $value
+				);
 
 				if ( ! empty( $personal_name ) ) {
 					$customer_data['personalInformation'] = [
@@ -243,7 +239,7 @@ final class Client {
 			// Contact details (email).
 			$email = $customer->get_email();
 
-			if ( null !== $email ) {
+			if ( null !== $email && '' !== $email ) {
 				$customer_data['contactDetails'] = [
 					'emailAddress' => $email,
 				];
@@ -252,14 +248,14 @@ final class Client {
 			// Locale.
 			$locale = $customer->get_locale();
 
-			if ( null !== $locale ) {
+			if ( null !== $locale && '' !== $locale ) {
 				$customer_data['locale'] = $locale;
 			}
 
 			// Device IP address.
 			$ip_address = $customer->get_ip_address();
 
-			if ( null !== $ip_address ) {
+			if ( null !== $ip_address && '' !== $ip_address ) {
 				$customer_data['device'] = [
 					'ipAddress' => $ip_address,
 				];
@@ -268,36 +264,21 @@ final class Client {
 
 		// Billing address.
 		if ( null !== $billing_address ) {
-			$address = [];
+			$address_data = [
+				'street'      => $billing_address->get_street_name(),
+				'houseNumber' => $billing_address->get_house_number(),
+				'city'        => $billing_address->get_city(),
+				'zip'         => $billing_address->get_postal_code(),
+				'countryCode' => $billing_address->get_country_code(),
+			];
 
-			$street_name = $billing_address->get_street_name();
+			$address = \array_filter(
+				$address_data,
+				static fn( $value ) => null !== $value && '' !== $value
+			);
 
-			if ( null !== $street_name ) {
-				$address['street'] = $street_name;
-			}
-
-			$house_number = $billing_address->get_house_number();
-
-			if ( null !== $house_number ) {
-				$address['houseNumber'] = (string) $house_number;
-			}
-
-			$city = $billing_address->get_city();
-
-			if ( null !== $city ) {
-				$address['city'] = $city;
-			}
-
-			$postal_code = $billing_address->get_postal_code();
-
-			if ( null !== $postal_code ) {
-				$address['zip'] = $postal_code;
-			}
-
-			$country_code = $billing_address->get_country_code();
-
-			if ( null !== $country_code ) {
-				$address['countryCode'] = $country_code;
+			if ( \array_key_exists( 'houseNumber', $address ) ) {
+				$address['houseNumber'] = (string) $address['houseNumber'];
 			}
 
 			if ( ! empty( $address ) ) {
