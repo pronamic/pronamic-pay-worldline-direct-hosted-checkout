@@ -172,7 +172,6 @@ final class Client {
 			],
 		];
 
-		// Add customer data if available.
 		$customer_data = $this->get_customer_data( $payment );
 
 		if ( ! empty( $customer_data ) ) {
@@ -213,9 +212,7 @@ final class Client {
 		$customer        = $payment->customer;
 		$billing_address = $payment->billing_address;
 
-		// Customer-related data.
 		if ( null !== $customer ) {
-			// Personal information (name).
 			$name = $customer->get_name();
 
 			if ( null !== $name ) {
@@ -236,7 +233,6 @@ final class Client {
 				}
 			}
 
-			// Contact details (email).
 			$email = $customer->get_email();
 
 			if ( null !== $email && '' !== $email ) {
@@ -245,14 +241,12 @@ final class Client {
 				];
 			}
 
-			// Locale.
 			$locale = $customer->get_locale();
 
 			if ( null !== $locale && '' !== $locale ) {
 				$customer_data['locale'] = $locale;
 			}
 
-			// Device IP address.
 			$ip_address = $customer->get_ip_address();
 
 			if ( null !== $ip_address && '' !== $ip_address ) {
@@ -262,7 +256,6 @@ final class Client {
 			}
 		}
 
-		// Billing address.
 		if ( null !== $billing_address ) {
 			$address_data = [
 				'street'      => $billing_address->get_street_name(),
