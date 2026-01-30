@@ -16,6 +16,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Locale
   - Device IP address
 
+## [1.2.0] - 2026-01-30
+
+### Commits
+
+- Added customer data to Worldline hosted checkout requests (#8) ([7a2ed01](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/7a2ed018ad1d7e9e533fb1b918f05ce284911d53))
+- Fixed incorrect order field names in hosted checkout request ([e4e041c](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/e4e041ce4fe1f94c6581ece085c031a5bdc91ad0))
+- Added Worldline Direct API OpenAPI spec and docs ([d2c4642](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/d2c464242069ce5706fc9d8b74c93a474012288d))
+
+### Composer
+
+- Changed `wp-pay/core` from `v4.30.0` to `v4.31.0`.
+	Release notes: https://github.com/pronamic/wp-pay-core/releases/tag/v4.31.0
+
+Full set of changes: [`1.1.0...1.2.0`][1.2.0]
+
+[1.2.0]: https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/compare/v1.1.0...v1.2.0
+
 ## [1.1.0] - 2026-01-27
 
 ### Commits
