@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "906706bbf4f378a853a406bee9422b66",
+    "content-hash": "875e25f3f84fc3d00b204a6149cafadc",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -511,16 +511,16 @@
         },
         {
             "name": "wp-pay/core",
-            "version": "v4.30.0",
+            "version": "v4.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/wp-pay-core.git",
-                "reference": "c81e002cf25db443e268973f5c1652f5c08df69d"
+                "reference": "552f61619f435fa964f6fca08910dff34d538597"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/wp-pay-core/zipball/c81e002cf25db443e268973f5c1652f5c08df69d",
-                "reference": "c81e002cf25db443e268973f5c1652f5c08df69d",
+                "url": "https://api.github.com/repos/pronamic/wp-pay-core/zipball/552f61619f435fa964f6fca08910dff34d538597",
+                "reference": "552f61619f435fa964f6fca08910dff34d538597",
                 "shasum": ""
             },
             "require": {
@@ -539,7 +539,7 @@
                 "woocommerce/action-scheduler": "^3.9"
             },
             "require-dev": {
-                "overtrue/phplint": "^9.4",
+                "overtrue/phplint": "^9.6",
                 "php-coveralls/php-coveralls": "^2.4",
                 "php-stubs/wordpress-globals": "^0.2.0",
                 "php-stubs/wp-cli-stubs": "^2.4",
@@ -549,7 +549,7 @@
                 "pronamic/pronamic-cli": "^1.1",
                 "pronamic/wp-coding-standards": "^2.4",
                 "pronamic/wp-documentor": "^1.4",
-                "rector/rector": "^2.2",
+                "rector/rector": "^2.3",
                 "roots/wordpress": "^6.8",
                 "szepeviktor/phpstan-wordpress": "^2.0",
                 "vimeo/psalm": "^5.24",
@@ -600,7 +600,7 @@
                 "issues": "https://github.com/wp-pay/core/issues",
                 "source": "https://github.com/wp-pay/core"
             },
-            "time": "2026-01-27T09:51:39+00:00"
+            "time": "2026-01-30T08:08:15+00:00"
         }
     ],
     "packages-dev": [
@@ -2808,16 +2808,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.3.4",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "9227d7a24b0f23ae941057509364f948d5da9ab2"
+                "reference": "9442f4037de6a5347ae157fe8e6c7cda9d909070"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9227d7a24b0f23ae941057509364f948d5da9ab2",
-                "reference": "9227d7a24b0f23ae941057509364f948d5da9ab2",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9442f4037de6a5347ae157fe8e6c7cda9d909070",
+                "reference": "9442f4037de6a5347ae157fe8e6c7cda9d909070",
                 "shasum": ""
             },
             "require": {
@@ -2856,7 +2856,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.3.4"
+                "source": "https://github.com/rectorphp/rector/tree/2.3.5"
             },
             "funding": [
                 {
@@ -2864,7 +2864,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-21T14:49:03+00:00"
+            "time": "2026-01-28T15:22:48+00:00"
         },
         {
             "name": "roots/wordpress",
