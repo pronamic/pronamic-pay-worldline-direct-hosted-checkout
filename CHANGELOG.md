@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Personal information (first name, surname)
   - Contact details (email address)
   - Billing address (street, house number, city, postal code, country code)
-  - Locale
+  - Locale (customer data)
   - Device IP address
+- Added locale to `hostedCheckoutSpecificInput` to set the GUI language for the consumer
 
 ## [1.2.0] - 2026-01-30
 
