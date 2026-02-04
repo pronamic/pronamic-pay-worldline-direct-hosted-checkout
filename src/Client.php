@@ -161,6 +161,16 @@ final class Client {
 			$hosted_checkout_specific_input['variant'] = $this->config->variant;
 		}
 
+		$customer = $payment->customer;
+
+		if ( null !== $customer ) {
+			$locale = $customer->get_locale();
+
+			if ( null !== $locale && '' !== $locale ) {
+				$hosted_checkout_specific_input['locale'] = $locale;
+			}
+		}
+
 		$order = [
 			'amountOfMoney' => [
 				'amount'       => $payment->get_total_amount()->get_minor_units(),
