@@ -29,6 +29,26 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	public ?string $variant = null;
 
 	/**
+	 * Merchant Reference.
+	 *
+	 * The merchant reference format that will be sent to Worldline.
+	 * Supports merge tags: {payment_id}, {order_id}.
+	 *
+	 * @var string|null
+	 */
+	public ?string $merchant_reference = null;
+
+	/**
+	 * Descriptor.
+	 *
+	 * The descriptor that will be shown to customers on their bank statements.
+	 * Supports merge tags: {payment_id}, {order_id}.
+	 *
+	 * @var string|null
+	 */
+	public ?string $descriptor = null;
+
+	/**
 	 * Construct config.
 	 *
 	 * @param string $api_host    API Host.
@@ -64,12 +84,14 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 */
 	public function jsonSerialize(): object {
 		return (object) [
-			'@type'       => self::class,
-			'api_host'    => $this->api_host,
-			'merchant_id' => $this->merchant_id,
-			'api_key'     => $this->api_key,
-			'api_secret'  => $this->api_secret,
-			'variant'     => $this->variant,
+			'@type'              => self::class,
+			'api_host'           => $this->api_host,
+			'merchant_id'        => $this->merchant_id,
+			'api_key'            => $this->api_key,
+			'api_secret'         => $this->api_secret,
+			'variant'            => $this->variant,
+			'merchant_reference' => $this->merchant_reference,
+			'descriptor'         => $this->descriptor,
 		];
 	}
 }

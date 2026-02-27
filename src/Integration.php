@@ -116,6 +116,24 @@ final class Integration extends AbstractGatewayIntegration {
 
 		$fields[] = [
 			'section'     => 'advanced',
+			'title'       => \__( 'Merchant Reference', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'description' => \__( 'The merchant reference that will be sent to Worldline. Supports merge tags: {payment_id}, {order_id}. Default: {payment_id}', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'meta_key'    => '_pronamic_gateway_worldline_direct_merchant_reference',
+			'type'        => 'text',
+			'classes'     => [ 'regular-text', 'code' ],
+		];
+
+		$fields[] = [
+			'section'     => 'advanced',
+			'title'       => \__( 'Descriptor', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'description' => \__( 'The descriptor that will be shown to customers on their bank statements. Supports merge tags: {payment_id}, {order_id}. Default: Order {payment_id}', 'pronamic-pay-worldline-direct-hosted-checkout' ),
+			'meta_key'    => '_pronamic_gateway_worldline_direct_descriptor',
+			'type'        => 'text',
+			'classes'     => [ 'regular-text', 'code' ],
+		];
+
+		$fields[] = [
+			'section'     => 'advanced',
 			'title'       => \__( 'Variant', 'pronamic-pay-worldline-direct-hosted-checkout' ),
 			'description' => \__( 'You can force the use of a custom template by specifying it in the variant field. This allows you to test out the effect of certain changes to your payment pages in a controlled manner. Please note that you need to specify the filename of the template or customization.', 'pronamic-pay-worldline-direct-hosted-checkout' ),
 			'meta_key'    => '_pronamic_gateway_worldline_direct_variant',
@@ -143,6 +161,18 @@ final class Integration extends AbstractGatewayIntegration {
 
 		if ( '' !== $variant ) {
 			$config->variant = $variant;
+		}
+
+		$merchant_reference = (string) $this->get_meta( $post_id, 'worldline_direct_merchant_reference' );
+
+		if ( '' !== $merchant_reference ) {
+			$config->merchant_reference = $merchant_reference;
+		}
+
+		$descriptor = (string) $this->get_meta( $post_id, 'worldline_direct_descriptor' );
+
+		if ( '' !== $descriptor ) {
+			$config->descriptor = $descriptor;
 		}
 
 		return $config;

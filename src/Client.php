@@ -114,6 +114,22 @@ final class Client {
 	}
 
 	/**
+	 * Replace merge tags.
+	 *
+	 * @param string  $text    Text with merge tags.
+	 * @param Payment $payment Payment.
+	 * @return string
+	 */
+	private function replace_merge_tags( string $text, Payment $payment ): string {
+		$replacements = [
+			'{payment_id}' => (string) $payment->get_id(),
+			'{order_id}'   => (string) $payment->get_order_id(),
+		];
+
+		return \strtr( $text, $replacements );
+	}
+
+	/**
 	 * Get webhook URL.
 	 *
 	 * @param Payment $payment Payment.
@@ -171,14 +187,17 @@ final class Client {
 			}
 		}
 
+		$merchant_reference = $this->config->merchant_reference ?? '{payment_id}';
+		$descriptor         = $this->config->descriptor ?? 'Order {payment_id}';
+
 		$order = [
 			'amountOfMoney' => [
 				'amount'       => $payment->get_total_amount()->get_minor_units(),
 				'currencyCode' => $payment->get_total_amount()->get_currency()->get_alphabetic_code(),
 			],
 			'references'    => [
-				'merchantReference' => $payment->get_id(),
-				'descriptor'        => 'Order ' . $payment->get_id(),
+				'merchantReference' => $this->replace_merge_tags( $merchant_reference, $payment ),
+				'descriptor'        => $this->replace_merge_tags( $descriptor, $payment ),
 			],
 		];
 
