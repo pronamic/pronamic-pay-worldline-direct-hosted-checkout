@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-23
+
 ### Added
 
-- Added customer data to hosted checkout requests for improved payment information in Worldline interface:
-  - Personal information (first name, surname)
-  - Contact details (email address)
-  - Billing address (street, house number, city, postal code, country code)
-  - Locale (customer data)
-  - Device IP address
-- Added locale to `hostedCheckoutSpecificInput` to set the GUI language for the consumer
+- Added locale to `hostedCheckoutSpecificInput` to control the language of the Worldline-hosted payment page.
+- Added configurable reference fields (`merchantReference`, `descriptor`, `invoiceNumber`) with merge tag support, allowing dynamic values from payment data.
+
+Full set of changes: [`1.2.0...1.3.0`][1.3.0]
+
+[1.3.0]: https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/compare/v1.2.0...v1.3.0
 
 ## [1.2.0] - 2026-01-30
 
