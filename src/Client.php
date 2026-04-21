@@ -194,20 +194,22 @@ final class Client {
 		$descriptor         = $this->replace_merge_tags( $descriptor, $payment );
 
 		/**
-		 * Filter the merchant reference.
+		 * Filters the merchant reference.
 		 *
 		 * @param string  $merchant_reference Merchant reference.
 		 * @param Payment $payment            Payment.
+		 * @return string Filtered merchant reference.
 		 */
-		$merchant_reference = \apply_filters( 'pronamic_pay_worldline_direct_hosted_checkout_merchant_reference', $merchant_reference, $payment );
+		$merchant_reference = (string) \apply_filters( 'pronamic_pay_worldline_direct_hosted_checkout_merchant_reference', $merchant_reference, $payment );
 
 		/**
-		 * Filter the descriptor.
+		 * Filters the descriptor.
 		 *
 		 * @param string  $descriptor Descriptor.
 		 * @param Payment $payment    Payment.
+		 * @return string Filtered descriptor.
 		 */
-		$descriptor = \apply_filters( 'pronamic_pay_worldline_direct_hosted_checkout_descriptor', $descriptor, $payment );
+		$descriptor = (string) \apply_filters( 'pronamic_pay_worldline_direct_hosted_checkout_descriptor', $descriptor, $payment );
 
 		$order = [
 			'amountOfMoney' => [

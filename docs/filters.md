@@ -10,7 +10,9 @@ Filters the merchant reference before sending it to Worldline Direct.
 
 **Parameters:**
 - `$merchant_reference` (string) - The merchant reference value after merge tag replacement.
-- `$payment` (Payment) - The payment object.
+- `$payment` (\Pronamic\WordPress\Pay\Payments\Payment) - The payment object.
+
+**Return:** (string) The filtered merchant reference. Callbacks must return a string and should keep within Worldline's field limits.
 
 **Example:**
 
@@ -27,7 +29,9 @@ Filters the descriptor (payment description shown on bank statements) before sen
 
 **Parameters:**
 - `$descriptor` (string) - The descriptor value after merge tag replacement.
-- `$payment` (Payment) - The payment object.
+- `$payment` (\Pronamic\WordPress\Pay\Payments\Payment) - The payment object.
+
+**Return:** (string) The filtered descriptor. Callbacks must return a string and should keep within Worldline's field limits.
 
 **Example:**
 
