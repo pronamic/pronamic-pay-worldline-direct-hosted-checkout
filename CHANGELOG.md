@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-13
+
+### Added
+
+- Added WordPress filters `pronamic_pay_worldline_direct_hosted_checkout_merchant_reference` and `pronamic_pay_worldline_direct_hosted_checkout_descriptor` to allow customization of the merchant reference and descriptor via code.
+
+Full set of changes: [`1.3.0...1.4.0`][1.4.0]
+
+[1.4.0]: https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/compare/v1.3.0...v1.4.0
+
 ## [1.3.0] - 2026-03-23
 
 ### Added
