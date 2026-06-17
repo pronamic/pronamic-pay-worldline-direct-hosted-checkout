@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: API specifications
-  version: 2.461.1
+  version: 2.416.0
   description: >-
     # Introduction
 
@@ -25,8 +25,6 @@ tags:
   description: The tokenization REST services allow you to  securely detokenize card details for reuse in further payments.
 - name: CofSeries
   description: Through this API you can create your CofSeries. A CofSeries is a series of tokens that can be used to identify a card or bank account for recurring payments.
-- name: ThreeDSecure
-  description: The 3D Secure REST services provides secure, real-time access to authentication across multiple card schemes and protocols. Allow also retrieve details of a 3D Secure authentication created through the service. All requests to API must be authenticated using Worldline API Key and API Secret credentials
 - name: Captures
   description: The captures REST services allow you to retrieve details of a capture created through the capture payment API. A capture is identified by its captureId.
 - name: Refunds
@@ -78,17 +76,6 @@ tags:
   description: This API allows you to create payment links, retrieve details about your existing links, or cancel a link. A payment link is identified by its paymentLinkId.
 - name: Webhooks
   description: Webhooks allows you to receive notifications concerning any status change on your payments and operations. The following endpoints allow you to test and demo the webhook feature.
-- name: MerchantBatch
-  description: >-
-    Merchant batch services allow you to submit, process and get status of batches.
-
-    * Submit batch API is used to submit a list of payments.
-
-    * Start processing batch transactions by providing merchantId and merchantBatchReference.
-
-    * Get batch status API is used to retrieve the status of a batch by merchantId and merchantBatchReference.
-- name: HostedFields
-  description: Hosted Fields allow merchants to embed secure iframes into their payment forms to capture and tokenize card payment data.
 x-tagGroups:
 - name: Server API
   tags:
@@ -97,7 +84,6 @@ x-tagGroups:
   - Subsequent
   - Tokenization
   - CofSeries
-  - ThreeDSecure
   - Captures
   - Refunds
   - Complete
@@ -117,6 +103,7 @@ x-tagGroups:
 - name: Client API
   tags:
   - ClientCrypto
+  - ClientPayments
   - ClientProductGroups
   - ClientProducts
   - ClientServices
@@ -186,14 +173,14 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/createHostedCheckoutResponse'
         400:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -263,14 +250,14 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/createHostedTokenizationResponse'
         400:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -314,80 +301,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/hostedfields/sessions:
-    post:
-      summary: Create hosted fields session
-      description: You can start a hosted fields session by posting the relevant details to the endpoint. We will then return you the url with the SDK to be embedded in your page along with necessary security token.
-      tags:
-      - HostedFields
-      operationId: CreateHostedFieldsSessionApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: Merchant's Id
-        schema:
-          type: string
-        required: true
-        example: ABCDEF123
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/createHostedFieldsSessionRequest'
-              description: Object containing data required to create hosted fields session
-        required: true
-      responses:
-        200:
-          description: Session data for later usage
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/createHostedFieldsSessionResponse'
-                description: Object containing data required to initialize hosted fields iframes
-  /v2/{merchantId}/hostedfields/sessions/{sessionId}:
-    get:
-      summary: Get hosted fields session
-      description: You can retrieve the details of a hosted fields session by providing the session ID.
-      tags:
-      - HostedFields
-      operationId: GetHostedFieldsSessionApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: Merchant's Id
-        schema:
-          type: string
-        required: true
-        example: ABCDEF123
-      - name: sessionId
-        in: path
-        description: Session Id
-        schema:
-          type: string
-          minLength: 32
-          maxLength: 32
-        required: true
-        example: 3f2504e04f8911d39a0c0305e82c3301
-      responses:
-        200:
-          description: Session and token data for the session
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getHostedFieldsSessionResponse'
-                description: Object containing hosted fields session data
-        404:
-          description: Session not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetailsResponse'
-                description: Object containing the problem details when an error occurs
   /v2/{merchantId}/payments:
     post:
       summary: Create payment
       description: >-
-        You initiate a payment by posting all the required payment details. After you have done so one or more of the following things can take place.
+        You initiate a payment by posting all the required payment details. After you have done so one or more of the following things can take place:
 
 
         * Your payment request is rejected. This can happen for various reasons, but a detailed reason is always returned in the response to you. In some cases a payment object was created and you will find all the details in the response as well.
@@ -774,7 +692,7 @@ paths:
                 description: This object has the numeric representation of the current refund status, timestamp of last status change and performable action on the current refund resource. In case of a rejected refund, detailed error information is listed.
         400:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -822,14 +740,14 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/completePaymentResponse'
         400:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -1110,14 +1028,67 @@ paths:
       - Products
       operationId: GetPaymentProducts
       parameters:
-      - $ref: '#/components/parameters/merchantIdPath'
-      - $ref: '#/components/parameters/countryCodeQueryRequired'
-      - $ref: '#/components/parameters/currencyCodeQueryRequired'
-      - $ref: '#/components/parameters/localeQuery'
-      - $ref: '#/components/parameters/amountQuery'
-      - $ref: '#/components/parameters/paymentProductIsRecurringQuery'
-      - $ref: '#/components/parameters/paymentProductHideQuery'
-      - $ref: '#/components/parameters/paymentProductOperationTypeQuery'
+      - name: merchantId
+        in: path
+        description: The Merchant Id
+        schema:
+          type: string
+        required: true
+      - name: countryCode
+        in: query
+        description: ISO 3166-1 alpha-2 country code of the transaction
+        schema:
+          type: string
+        required: true
+      - name: currencyCode
+        in: query
+        description: Three-letter ISO currency code representing the currency for the amount
+        schema:
+          type: string
+        required: true
+      - name: locale
+        in: query
+        description: Locale used in the GUI towards the consumer.
+        schema:
+          type: string
+      - name: amount
+        in: query
+        description: Whole amount in cents (not containing any decimals)
+        schema:
+          type: integer
+          format: int64
+      - name: isRecurring
+        in: query
+        description: >-
+          This allows you to filter payment products based on their support for recurring payments.
+
+          * true - return only payment products that support recurring payments,
+
+          * false - return all payment products that support one-time transactions. Payment products that support recurring products are usually also part of this list.
+        schema:
+          type: boolean
+      - name: hide
+        in: query
+        description: >-
+          Allows you to hide elements from the response, reducing the amount of data that needs to be returned to your client. Possible options are:
+
+          * fields - Do not return any data on fields of the payment product
+
+          * accountsOnFile - Do not return any accounts on file data
+
+          * translations - Do not return any label texts associated with the payment products
+
+          * productsWithoutFields - Do not return products that require any additional data to be captured
+
+          * productsWithoutInstructions - Do not return products that show instructions
+
+          * productsWithRedirects - Do not return products that require a redirect to a third party. Note that products that involve potential redirects related to 3D Secure authentication are not hidden
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
       responses:
         200:
           x-nullable: true
@@ -1142,15 +1113,74 @@ paths:
       - Products
       operationId: GetPaymentProduct
       parameters:
-      - $ref: '#/components/parameters/merchantIdPath'
-      - $ref: '#/components/parameters/paymentProductIdPath'
-      - $ref: '#/components/parameters/countryCodeQueryRequired'
-      - $ref: '#/components/parameters/currencyCodeQueryRequired'
-      - $ref: '#/components/parameters/localeQuery'
-      - $ref: '#/components/parameters/amountQuery'
-      - $ref: '#/components/parameters/paymentProductIsRecurringQuery'
-      - $ref: '#/components/parameters/paymentProductHideQuery'
-      - $ref: '#/components/parameters/paymentProductOperationTypeQuery'
+      - name: merchantId
+        in: path
+        description: The Merchant Id
+        schema:
+          type: string
+        required: true
+      - name: paymentProductId
+        in: path
+        description: The payment product identifier.
+        schema:
+          type: integer
+          format: int32
+        required: true
+      - name: countryCode
+        in: query
+        description: ISO 3166-1 alpha-2 country code of the transaction
+        schema:
+          type: string
+        required: true
+      - name: currencyCode
+        in: query
+        description: Three-letter ISO currency code representing the currency for the amount
+        schema:
+          type: string
+        required: true
+      - name: locale
+        in: query
+        description: Locale used in the GUI towards the consumer.
+        schema:
+          type: string
+      - name: amount
+        in: query
+        description: Whole amount in cents (not containing any decimals)
+        schema:
+          type: integer
+          format: int64
+      - name: isRecurring
+        in: query
+        description: >-
+          This allows you to filter payment products based on their support for recurring payments.
+
+          * true - return only payment products that support recurring payments,
+
+          * false - return all payment products that support one-time transactions. Payment products that support recurring products are usually also part of this list.
+        schema:
+          type: boolean
+      - name: hide
+        in: query
+        description: >-
+          Allows you to hide elements from the response, reducing the amount of data that needs to be returned to your client. Possible options are:
+
+          * fields - Do not return any data on fields of the payment product
+
+          * accountsOnFile - Do not return any accounts on file data
+
+          * translations - Do not return any label texts associated with the payment products
+
+          * productsWithoutFields - Do not return products that require any additional data to be captured
+
+          * productsWithoutInstructions - Do not return products that show instructions
+
+          * productsWithRedirects - Do not return products that require a redirect to a third party. Note that products that involve potential redirects related to 3D Secure authentication are not hidden
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
       responses:
         200:
           x-nullable: true
@@ -1279,14 +1309,14 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/productDirectory'
         400:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -1294,50 +1324,6 @@ paths:
         404:
           x-nullable: true
           description: no directory Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/products/{paymentProductId}/sessions:
-    post:
-      summary: Create a session for a payment product
-      description: In case you use your own payment pages and you want to host Apple Pay on the Web, Apple requires that a session is created. This API allows you to request an Apple Pay merchant session.
-      tags:
-      - Products
-      operationId: CreatePaymentProductSession
-      parameters:
-      - name: merchantId
-        in: path
-        description: The Merchant Id
-        schema:
-          type: string
-        required: true
-      - name: paymentProductId
-        in: path
-        description: The Payment Product Id
-        schema:
-          type: integer
-          format: int32
-        required: true
-        example: 302
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/paymentProductSessionRequest'
-              description: This object contains all the details needed to create a payment session.
-      responses:
-        200:
-          x-nullable: true
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/paymentProductSessionResponse'
-                description: This object contains all the details of the created payment product session.
-        400:
-          x-nullable: true
-          description: The input data provided is incorrect.
           content:
             application/json:
               schema:
@@ -1359,7 +1345,7 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -1473,7 +1459,7 @@ paths:
       responses:
         200:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -1564,7 +1550,7 @@ paths:
       responses:
         201:
           x-nullable: true
-          description: ""
+          description: ''
           content:
             application/json:
               schema:
@@ -1697,306 +1683,6 @@ paths:
         404:
           x-nullable: true
           description: In case the token could not be found, an HTTP 404 response is returned.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/tokens/importCofSeries:
-    post:
-      summary: Imports the COF Series token.
-      description: >-
-        Use this endpoint to import a Card-on-File (COF) series token using previously stored information, such as card details, a token ID, or an external reference
-
-        After the import is complete, an Initial Payment object will be created and returned. This allows you to immediately process or track the imported token as part of a payment flow.
-
-        This endpoint is intended for special flows where tokens are not created directly by the consumer, but rather imported from another system.
-      tags:
-      - CofSeries
-      operationId: ImportCofSeriesApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: The merchantId is required for processing transactions.
-        schema:
-          type: string
-        required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/importCofSeriesRequest'
-              description: Object containing the data required to import a COF Series token.
-        required: true
-      responses:
-        201:
-          x-nullable: true
-          description: The token was successfully imported and an initial payment object was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/importCofSeriesResponse'
-                description: This object contains a unique payment ID generated based on the provided SRD (Scheme Reference Data).
-        400:
-          x-nullable: true
-          description: The request was malformed or was missing required data. When a required property is missing, the error message will point out which property caused the error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: You are not allowed to access the service or account. Alternatively, your API authentication may have failed.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: In case the token or merchant identifier could not be found, an HTTP 404 response is returned.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        502:
-          x-nullable: true
-          description: Any 5XX response points to something that went wrong on our end. This could also mean that the system was unable to route the transaction to an appropriate acquirer or third party. Another reason for such a response is when the third party's response could not be understood.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        503:
-          x-nullable: true
-          description: The service is currently unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/detokenize/csr:
-    post:
-      summary: Sign certificate
-      description: >-
-        This endpoint accepts a Certificate Signing Request (CSR) to create a new certificate.
-
-        Upon successful creation, a signed certificate is returned to the merchant.
-      tags:
-      - Tokenization
-      operationId: CreateCertificateApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: The merchantId is required for processing CSR requests.
-        schema:
-          type: string
-        required: true
-        example: "123456789"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/csrRequest'
-              description: Object containing the necessary information to create a new Certificate Signing Request (CSR). This includes the encoded data required for generating a digital certificate, which encompasses the public key and the identity details of the requester.
-        required: true
-      responses:
-        201:
-          x-nullable: true
-          description: The certificate has been successfully generated and is now available for the requester.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/createCertificateResponse'
-                description: A response containing a signed certificate, which serves as proof of successful transaction processing and can be used for verification purposes by the merchant.
-        400:
-          x-nullable: true
-          description: The provided CSR data is invalid or improperly formatted.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden (not enough permissions to create certificate).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: The specified merchant ID was not found; unable to process the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        502:
-          x-nullable: true
-          description: Any 5XX response points to something that went wrong on our end. This could also be that the system was unable to route the transaction to an appropriate acquirer/third party. Another reason for such a response is when the third party's response could not be understood.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        503:
-          x-nullable: true
-          description: The service is currently unavailable. Please try again later or contact support for assistance.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/detokenize/tokens:
-    get:
-      summary: Get sensitive card details by card alias tokens
-      description: >-
-        This endpoint allows you to obtain a list of sensitive card-related information for a specific merchant, based on the provided tokens.
-
-        Each token corresponds to a unique card, enabling secure access to the relevant data.
-      tags:
-      - Tokenization
-      operationId: GetCardDataByTokensApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: The merchantId is required for processing CSR requests.
-        schema:
-          type: string
-        required: true
-        example: "123456789"
-      - name: tokens
-        in: query
-        description: This object contains the details for detokenizing a payment token.
-        schema:
-          type: array
-          description: Array of tokens to be detokenized.
-          items:
-            type: string
-            description: A unique identifier for the token, which is used to securely reference the payment method. This token can be utilized for subsequent transactions without needing to re-enter sensitive payment details.
-            example: token-123456789
-          minItems: 1
-          maxItems: 10
-        required: true
-        style: form
-        explode: true
-        example:
-        - token-123456789
-        - token-987654321
-      responses:
-        201:
-          x-nullable: true
-          description: The list of card data that has been detokenized is based on the provided tokens, allowing for secure access to sensitive payment information.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/detokenizationResponse'
-                description: The response contains an array of detokenized data for the provided token IDs, which includes card details and expiration dates. All sensitive data is encrypted for security.
-        400:
-          x-nullable: true
-          description: The provided token list is invalid or improperly formatted.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden (not enough permissions to detokenize token).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: The specified tokens were not found; unable to process the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        502:
-          x-nullable: true
-          description: Any 5XX response points to something that went wrong on our end. This could also be that the system was unable to route the transaction to an appropriate acquirer/third party. Another reason for such a response is when the third party's response could not be understood.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        503:
-          x-nullable: true
-          description: The service is currently unavailable. Please try again later or contact support for assistance.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/detokenize/payments:
-    get:
-      summary: Get sensitive card details by card payment identifiers
-      description: >-
-        This endpoint allows you to obtain a list of sensitive card-related information for a specific merchant, based on the provided payment ids.
-
-        Each token corresponds to a unique card, enabling secure access to the relevant data.
-      tags:
-      - Tokenization
-      operationId: GetCardDataByPaymentsApi
-      parameters:
-      - name: merchantId
-        in: path
-        description: The merchantId is required for processing CSR requests.
-        schema:
-          type: string
-        required: true
-        example: "123456789"
-      - name: payments
-        in: query
-        description: This object contains the details for detokenizing a payment token.
-        schema:
-          type: array
-          description: An array of payment IDs to be used for providing detokenized card data details.
-          items:
-            type: string
-            description: Unique identifier for each payment, used to retrieve the corresponding card data.
-            example: payments-123456789
-          minItems: 1
-          maxItems: 10
-        required: true
-        style: form
-        explode: true
-        example:
-        - payment-123456789
-        - payment-987654321
-        - payment-9876543
-      responses:
-        201:
-          x-nullable: true
-          description: The list of card data that has been detokenized is based on the provided tokens, allowing for secure access to sensitive payment information.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/detokenizationResponse'
-                description: The response contains an array of detokenized data for the provided token IDs, which includes card details and expiration dates. All sensitive data is encrypted for security.
-        400:
-          x-nullable: true
-          description: The provided token list is invalid or improperly formatted.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden (not enough permissions to detokenize token).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: The specified tokens were not found; unable to process the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        502:
-          x-nullable: true
-          description: Any 5XX response points to something that went wrong on our end. This could also be that the system was unable to route the transaction to an appropriate acquirer/third party. Another reason for such a response is when the third party's response could not be understood.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        503:
-          x-nullable: true
-          description: The service is currently unavailable. Please try again later or contact support for assistance.
           content:
             application/json:
               schema:
@@ -2293,14 +1979,82 @@ paths:
       - ClientProducts
       operationId: GetClientPaymentProducts
       parameters:
-      - $ref: '#/components/parameters/clientApiCustomerIdPath'
-      - $ref: '#/components/parameters/countryCodeQueryRequired'
-      - $ref: '#/components/parameters/currencyCodeQueryRequired'
-      - $ref: '#/components/parameters/localeQuery'
-      - $ref: '#/components/parameters/amountQuery'
-      - $ref: '#/components/parameters/paymentProductIsRecurringQuery'
-      - $ref: '#/components/parameters/paymentProductHideQuery'
-      - $ref: '#/components/parameters/paymentProductOperationTypeQuery'
+      - name: customerId
+        in: path
+        description: The session is built up around the customer in the form of the customerId. All client APIs use this customerId in the URI to identify the customer.
+        schema:
+          type: string
+        required: true
+      - name: countryCode
+        in: query
+        description: ISO 3166-1 alpha-2 country code of the transaction
+        schema:
+          type: string
+        required: true
+      - name: currencyCode
+        in: query
+        description: Three-letter ISO currency code representing the currency for the amount
+        schema:
+          type: string
+        required: true
+      - name: locale
+        in: query
+        description: Locale used in the GUI towards the consumer.
+        schema:
+          type: string
+      - name: amount
+        in: query
+        description: Whole amount in cents (not containing any decimals)
+        schema:
+          type: integer
+          format: int64
+      - name: isRecurring
+        in: query
+        description: >-
+          This allows you to filter payment products based on their support for recurring payments.
+
+          * true - return only payment products that support recurring payments,
+
+          * false - return all payment products that support one-time transactions. Payment products that support recurring products are usually also part of this list.
+        schema:
+          type: boolean
+      - name: hide
+        in: query
+        description: >-
+          Allows you to hide elements from the response, reducing the amount of data that needs to be returned to your client. Possible options are:
+
+          * fields - Do not return any data on fields of the payment product
+
+          * accountsOnFile - Do not return any accounts on file data
+
+          * translations - Do not return any label texts associated with the payment products
+
+          * productsWithoutFields - Do not return products that require any additional data to be captured
+
+          * productsWithoutInstructions - Do not return products that show instructions
+
+          * productsWithRedirects - Do not return products that require a redirect to a third party. Note that products that involve potential redirects related to 3D Secure authentication are not hidden
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
+      - name: operationType
+        in: query
+        description: >-
+          This allows you to filter payment products based on the operation type. Allowed values:
+
+          * Authorization - The payment creation results in an authorization that is ready for capture. Final authorizations can't be reversed and need to be captured for the full amount within 7 days.
+
+          * Pre-authorization - The payment creation results in a pre-authorization that is ready for capture. Pre-authortizations can be reversed and can be captured within 30 days. The capture amount can be lower than the authorized amount.
+
+          * Sale - The payment creation results in an authorization that is already captured at the moment of approval.
+
+          * Payout - Payout service enables seamless direct money transfers to a chosen bank account.
+        schema:
+          type: string
+        required: false
       responses:
         200:
           x-nullable: true
@@ -2325,15 +2079,89 @@ paths:
       - ClientProducts
       operationId: GetClientPaymentProduct
       parameters:
-      - $ref: '#/components/parameters/clientApiCustomerIdPath'
-      - $ref: '#/components/parameters/paymentProductIdPath'
-      - $ref: '#/components/parameters/countryCodeQueryRequired'
-      - $ref: '#/components/parameters/currencyCodeQueryRequired'
-      - $ref: '#/components/parameters/localeQuery'
-      - $ref: '#/components/parameters/amountQuery'
-      - $ref: '#/components/parameters/paymentProductIsRecurringQuery'
-      - $ref: '#/components/parameters/paymentProductHideQuery'
-      - $ref: '#/components/parameters/paymentProductOperationTypeQuery'
+      - name: customerId
+        in: path
+        description: The session is built up around the customer in the form of the customerId. All client APIs use this customerId in the URI to identify the customer.
+        schema:
+          type: string
+        required: true
+      - name: paymentProductId
+        in: path
+        description: The payment product identifier.
+        schema:
+          type: integer
+          format: int32
+        required: true
+      - name: countryCode
+        in: query
+        description: ISO 3166-1 alpha-2 country code of the transaction
+        schema:
+          type: string
+        required: true
+      - name: currencyCode
+        in: query
+        description: Three-letter ISO currency code representing the currency for the amount
+        schema:
+          type: string
+        required: true
+      - name: locale
+        in: query
+        description: Locale used in the GUI towards the consumer.
+        schema:
+          type: string
+      - name: amount
+        in: query
+        description: Whole amount in cents (not containing any decimals)
+        schema:
+          type: integer
+          format: int64
+      - name: isRecurring
+        in: query
+        description: >-
+          This allows you to filter payment products based on their support for recurring payments.
+
+          * true - return only payment products that support recurring payments,
+
+          * false - return all payment products that support one-time transactions. Payment products that support recurring products are usually also part of this list.
+        schema:
+          type: boolean
+      - name: hide
+        in: query
+        description: >-
+          Allows you to hide elements from the response, reducing the amount of data that needs to be returned to your client. Possible options are:
+
+          * fields - Do not return any data on fields of the payment product
+
+          * accountsOnFile - Do not return any accounts on file data
+
+          * translations - Do not return any label texts associated with the payment products
+
+          * productsWithoutFields - Do not return products that require any additional data to be captured
+
+          * productsWithoutInstructions - Do not return products that show instructions
+
+          * productsWithRedirects - Do not return products that require a redirect to a third party. Note that products that involve potential redirects related to 3D Secure authentication are not hidden
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
+      - name: operationType
+        in: query
+        description: >-
+          This allows you to filter payment products based on the operation type. Allowed values:
+
+          * Authorization - The payment creation results in an authorization that is ready for capture. Final authorizations can't be reversed and need to be captured for the full amount within 7 days.
+
+          * Pre-authorization - The payment creation results in a pre-authorization that is ready for capture. Pre-authortizations can be reversed and can be captured within 30 days. The capture amount can be lower than the authorized amount.
+
+          * Sale - The payment creation results in an authorization that is already captured at the moment of approval.
+
+          * Payout - Payout service enables seamless direct money transfers to a chosen bank account.
+        schema:
+          type: string
+        required: false
       responses:
         200:
           x-nullable: true
@@ -2418,50 +2246,6 @@ paths:
         404:
           x-nullable: true
           description: When no networks can be found matching the input criteria a HTTP 404 response is returned.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /client/v1/{customerId}/products/{paymentProductId}/sessions:
-    post:
-      summary: Create a session for a payment product
-      description: In case you use your own payment pages and you want to host Apple Pay on the Web, Apple requires that a session is created. This API allows you to request an Apple Pay merchant session.
-      tags:
-      - ClientProducts
-      operationId: CreateClientPaymentProductSession
-      parameters:
-      - name: customerId
-        in: path
-        description: The session is built up around the customer in the form of the customerId. All client APIs use this customerId in the URI to identify the customer.
-        schema:
-          type: string
-        required: true
-      - name: paymentProductId
-        in: path
-        description: The Payment Product Id
-        schema:
-          type: integer
-          format: int32
-        required: true
-        example: 302
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/paymentProductSessionRequest'
-              description: This object contains all the details needed to create a payment session.
-      responses:
-        200:
-          x-nullable: true
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/paymentProductSessionResponse'
-                description: This object contains all the details of the created payment product session.
-        400:
-          x-nullable: true
-          description: The input data provided is incorrect.
           content:
             application/json:
               schema:
@@ -2973,175 +2757,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/merchant-batches:
-    post:
-      summary: Submit batch
-      description: >-
-        You can submit a batch to this endpoint. Only a single `operationType` is supported per batch, and it must be consistent between the header and the body.
-
-          The API includes several validation steps to ensure the integrity and correctness of the data before processing. It performs operations such as JSON validation, idempotency checks, and insertion of batch items.
-
-          Upon successful submission, the API will return a response containing the merchantBatchReference and the total count of items in the batch.
-      tags:
-      - MerchantBatch
-      operationId: SubmitBatch
-      parameters:
-      - name: merchantId
-        in: path
-        description: The Merchant Id
-        schema:
-          type: string
-        required: true
-        example: merchant-id
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/submitBatchRequestBody'
-              description: Submit batch items, including batch metadata and an array of batch items.
-        required: true
-      responses:
-        201:
-          x-nullable: true
-          description: Batch Submitted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/submitBatchResponse'
-                description: The response returned after the submission of the batch. It contains details about the merchantBatchReference and the total number of batch items.
-        400:
-          x-nullable: true
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        500:
-          x-nullable: true
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/merchant-batches/{merchantBatchReference}/process:
-    post:
-      summary: Process batch transactions
-      description: Start processing the stored batch transactions that correspond to the merchantId and the merchantBatchReference sent in the request.
-      tags:
-      - MerchantBatch
-      operationId: ProcessBatch
-      parameters:
-      - name: merchantId
-        in: path
-        description: The Merchant Id
-        schema:
-          type: string
-        required: true
-        example: merchant-id
-      - name: merchantBatchReference
-        in: path
-        description: Unique batch reference submitted by the merchant
-        schema:
-          type: string
-        required: true
-        example: merchant-batch-ref-123456789
-      responses:
-        202:
-          description: Batch is submitted for processing
-        400:
-          x-nullable: true
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: Batch not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        500:
-          x-nullable: true
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /v2/{merchantId}/merchant-batches/{merchantBatchReference}:
-    get:
-      summary: Get batch status
-      description: Retrieve information about the batch including status of batch, the number of items and the operation identified by the merchantId and the merchantBatchReference.
-      tags:
-      - MerchantBatch
-      operationId: GetBatchStatus
-      parameters:
-      - name: merchantId
-        in: path
-        description: The Merchant Id
-        schema:
-          type: string
-        required: true
-        example: merchant-id
-      - name: merchantBatchReference
-        in: path
-        description: Unique batch reference submitted by the merchant
-        schema:
-          type: string
-        required: true
-        example: merchant-batch-ref-123456789
-      responses:
-        200:
-          x-nullable: true
-          description: The response contains the status of the batch.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getBatchStatusResponse'
-                description: The response contains information about the batch including status of batch, the type of operation, the merchant batch reference and the number of items in the batch.
-        400:
-          x-nullable: true
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        403:
-          x-nullable: true
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        404:
-          x-nullable: true
-          description: Batch not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-        500:
-          x-nullable: true
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
 components:
   schemas:
     feedbacks:
@@ -3169,7 +2784,8 @@ components:
       description: Object to apply a discount to the total basket by adding a discount line.
       properties:
         amount:
-          $ref: '#/components/schemas/amount'
+          type: integer
+          format: int64
           description: >-
             Amount in the smallest currency unit, i.e.:
 
@@ -3181,6 +2797,9 @@ components:
 
 
             * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
+          example: 1000
+          maximum: 999999999999
+          minimum: 0
     cancelPaymentResponse:
       type: object
       properties:
@@ -3199,12 +2818,6 @@ components:
         operationReferences:
           $ref: '#/components/schemas/operationPaymentReferences'
           description: Object that holds all reference properties that are linked to this transaction
-        shipping:
-          $ref: '#/components/schemas/shippingDetail'
-          description: Object containing the details of the shipping of the order
-        lineItemDetails:
-          $ref: '#/components/schemas/lineItemDetails'
-          description: List of lineItemIds and quantities for capture/refund/cancellation.
     hostedCheckoutSpecificOutput:
       type: object
       description: Hosted Checkout specific information. Populated if the payment was created on the platform through a Hosted Checkout.
@@ -3263,12 +2876,6 @@ components:
         discount:
           $ref: '#/components/schemas/discount'
           description: Object to apply a discount to the total basket by adding a discount line.
-        transactionDate:
-          type: string
-          format: date-time
-          description: It is the server-side processing date and time of the transaction.
-          example: 2019-08-24T14:15:22Z
-          pattern: ^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d)(\.\d+)?Z?$
     amountOfMoney:
       type: object
       description: Object containing amount and ISO currency code attributes
@@ -3312,9 +2919,6 @@ components:
         operationGroupReference:
           $ref: '#/components/schemas/operationGroupReference'
           description: An identifier for a group of transactions. This reference helps to link multiple related transactions together, facilitating easier reconciliation and tracking.
-        structuredCreditorReference:
-          $ref: '#/components/schemas/structuredCreditorReference'
-          description: Creditor Reference to use where applicable for invoicing related to the transaction, in accordance with ISO 11649. Might require merchant specific setup to enable and is subject to agreement with the acquirer.
     operationPaymentReferences:
       type: object
       description: Object that holds all reference properties that are linked to this transaction
@@ -3328,9 +2932,6 @@ components:
         operationGroupReference:
           $ref: '#/components/schemas/operationGroupReference'
           description: An identifier for a group of transactions. This reference helps to link multiple related transactions together, facilitating easier reconciliation and tracking.
-        structuredCreditorReference:
-          $ref: '#/components/schemas/structuredCreditorReference'
-          description: Creditor Reference to use where applicable for invoicing related to the transaction, in accordance with ISO 11649. Might require merchant specific setup to enable and is subject to agreement with the acquirer.
     cardPaymentMethodSpecificOutput:
       type: object
       description: Object containing the card payment method details
@@ -3397,12 +2998,6 @@ components:
               * default - The holder implicitly accepted the default brand.
               * alternative - The holder explicitly selected an alternative brand.
               * notApplicable - The card is not cobranded.
-        acceptance:
-          $ref: '#/components/schemas/acceptance'
-          description: This object contains the acceptance information for the card payment authorization.
-        crmToken:
-          $ref: '#/components/schemas/crmToken'
-          description: The CRM (Customer Relationship Management) token group. CRM tokens are available to enhance knowledge of a merchant's customers by attempting to identify the customer.
     paymentProduct3208SpecificOutput:
       type: object
       description: OneyDuplo Leroy Merlin specific details
@@ -3516,7 +3111,7 @@ components:
           description: >-
             Expiry date of the card
              Format: MMYY
-          example: "0529"
+          example: 0529
           maxLength: 4
         bin:
           type: string
@@ -3617,12 +3212,6 @@ components:
         virtualCardIndicator:
           $ref: '#/components/schemas/virtualCardIndicator'
           description: Indicates whether the card is a virtual card
-        issuerPrincipalMemberCode:
-          $ref: '#/components/schemas/issuerPrincipalMemberCode'
-          description: Code that identifies the principal member within an issuer group
-        issuerPrincipalMemberName:
-          $ref: '#/components/schemas/issuerPrincipalMemberName'
-          description: Name that identifies the principal member within an issuer group
     networkTokenEssentials:
       type: object
       description: Object containing network token details
@@ -3736,7 +3325,7 @@ components:
         schemeEci:
           type: string
           description: 3D Secure ECI (Electronic Commerce Indicator) depending on the Scheme. Returned by DS.
-          example: "5"
+          example: 5
           maxLength: 2
         authenticationStatus:
           type: string
@@ -3871,7 +3460,7 @@ components:
         expiryDate:
           type: string
           description: 'Expiry date of the tokenized card. Format: MMYY'
-          example: "0529"
+          example: 0529
           maxLength: 4
     redirectPaymentMethodSpecificOutput:
       type: object
@@ -3945,9 +3534,7 @@ components:
           description: Object containing address information
         customerAccount:
           $ref: '#/components/schemas/paymentProduct840CustomerAccount'
-          description: Deprecated - Use shippingAddress instead
-          deprecated: true
-          x-deprecated-by: shippingAddress
+          description: Object containing the details of the PayPal account
         customerAddress:
           $ref: '#/components/schemas/address'
           description: Object containing billing address details.
@@ -4005,7 +3592,7 @@ components:
         entityId:
           type: string
           description: The reference to be used during Multibanco payment for reconciliation matter
-          example: "12538"
+          example: 12538
           maxLength: 10
     paymentProduct5402SpecificOutput:
       type: object
@@ -4083,7 +3670,7 @@ components:
         zip:
           type: string
           description: Zip code
-          example: "1930"
+          example: 1930
           x-trim-at: 10
     paymentProduct840CustomerAccount:
       type: object
@@ -4205,7 +3792,7 @@ components:
         errorCode:
           type: string
           description: Error code
-          example: "50001130"
+          example: 50001130
         category:
           type: string
           description: >-
@@ -4223,7 +3810,7 @@ components:
             Deprecated: Use errorCode instead.
 
             Error code
-          example: "50001130"
+          example: 50001130
           deprecated: true
           x-deprecated-by: errorCode
         httpStatusCode:
@@ -4393,12 +3980,6 @@ components:
         operationReferences:
           $ref: '#/components/schemas/operationPaymentReferences'
           description: Object that holds all reference properties that are linked to this transaction
-        shipping:
-          $ref: '#/components/schemas/shippingDetail'
-          description: Object containing the details of the shipping of the order
-        lineItemDetails:
-          $ref: '#/components/schemas/lineItemDetails'
-          description: List of lineItemIds and quantities for capture/refund/cancellation.
     completePaymentResponse:
       type: object
       properties:
@@ -4475,9 +4056,6 @@ components:
       type: object
       description: Object returned for the SHOW_FORM actionType.
       properties:
-        paymentProduct5412:
-          $ref: '#/components/schemas/paymentProduct5412'
-          description: Contains the third party data for payment product 5412 (Chèque-Vacances Connect)
         paymentProduct5407:
           $ref: '#/components/schemas/paymentProduct5407'
           description: Contains the third party data for payment product 5407 (Twint)
@@ -4493,9 +4071,6 @@ components:
         paymentProduct3012:
           $ref: '#/components/schemas/paymentProduct3012'
           description: Contains the third party data for payment product 3012 (Bancontact)
-        paymentProduct840:
-          $ref: '#/components/schemas/paymentProduct840'
-          description: Contains the third party data for payment product 840 (PayPal)
         paymentProduct350:
           $ref: '#/components/schemas/paymentProduct350'
           description: Contains the third party data for payment product 350 (Swish)
@@ -4523,24 +4098,6 @@ components:
         threeDServerTransactionId:
           type: string
           description: The 3-D Secure version 2 transaction ID that is used for the 3D Authentication
-    paymentProduct5412:
-      type: object
-      description: Contains the third party data for payment product 5412 (Chèque-Vacances Connect)
-      properties:
-        appUrl:
-          type: string
-          description: A URL intended for mobile devices that is to be linked to the QR code so that mobile users can tap it, to open the Chèque-Vacances app.
-        qrCode:
-          type: string
-          description: Contains a base64 encoded PNG image. By prepending data:image/png;base64, this value can be used as the source of an HTML inline image on a desktop or tablet (intended to be scanned by a device with the Chèque-Vacances app)
-        pollingUrl:
-          type: string
-          description: >-
-            A URL that must be polled using JavaScript; it responds with one of the following:
-              * PRETRANSACTION, which indicates that the user has not yet consummed the QR code. At this step, the user can still be allowed to enter their beneficiary ID (or an e-mail known by ANCV) to initiate a CV Connect payment. As long as the response status is 'PRETRANSACTION', the input form should be shown and polling should continue.
-              * TRANSACTION, which indicates that the buyer has used the QR code to open the Chèque-Vacances app, but has not yet confirmed the payment in the app. In this case, you should show a message asking the user to confirm the payment in their Chèque-Vacances app and continue polling. The user should no longer be allowed to enter their beneficiary ID. As long as the response status is not 'FINALIZED', the message should be shown and polling should continue.
-              * FINALIZED, which indicates that the CV Connect process has concluded, but it does not necessarily confirm a successful payment. In this case, you should verify the payment outcome and redirect the customer to your status page accordingly.
-            If polling ends after a few minutes without receiving the status 'FINALIZED', it means the transaction cannot yet be ended as accepted or refused. Once the status changes to 'FINALIZED', you should verify the payment outcome and redirect the customer to your status page accordingly. Remember, a 'FINALIZED' status indicates that the CV Connect process has concluded, but it does not necessarily confirm a successful payment. If you end the polling after a few minutes without receiving the status 'FINALIZED', it means the transaction cannot yet be ended as accepted or refused. NB — If you try to call the polling endpoint with invalid data, you will receive an HTTP 204.
     paymentProduct5407:
       type: object
       description: Contains the third party data for payment product 5407 (Twint)
@@ -4593,13 +4150,6 @@ components:
           type: string
           description: Contains a value which can be used to build a QR code (intended to be scanned by a device with the Bancontact app)
           example: BEP://my.url.worldline.com/BEP*P-444444$DNEDXGBFGHVCOVEU6P5YP7TM
-    paymentProduct840:
-      type: object
-      description: Contains the third party data for payment product 840 (PayPal)
-      properties:
-        orderId:
-          type: string
-          description: Contains an identifier supplied by PayPal which must be provided to the PayPal JavaScript SDK.
     paymentProduct350:
       type: object
       description: Contains the third party data for payment product 350 (Swish)
@@ -4688,13 +4238,10 @@ components:
         discount:
           $ref: '#/components/schemas/discount'
           description: Object to apply a discount to the total basket by adding a discount line.
-        taxPercentage:
-          $ref: '#/components/schemas/taxPercentage'
-          description: tax percentage, in hundredths of a percent. For example, for a tax percentage of 21%, this field should be set to 2100. Omit if not applicable or not known.
         totalTaxAmount:
           type: integer
           format: int64
-          description: Tax amount, in minor currency units of the order. Omit if not applicable or not known. This amount is assumed to be included in the order.AmountOfMoney for the payment. There is no validation on this field, outside the fact the amount should be lower than the total payment amount.
+          description: tax amount, in minor currency units of the order. Omit if not applicable or not known. This amount is assumed to be included in the order.AmountOfMoney for the payment. There is no validation on this field, outside the fact the amount should be lower than the total payment amount.
           example: 1000
           maximum: 999999999999
           minimum: 0
@@ -5091,14 +4638,6 @@ components:
 
             This field is used by the following payment products: 840
           minimum: 0
-        flightCode:
-          type: string
-          description: >-
-            The flight number of the current leg.
-
-            This field is used by the following payment products: 840
-          example: "1"
-          maxLength: 5
     airlinePassenger:
       type: object
       properties:
@@ -5109,21 +4648,6 @@ components:
           - none
           - enrolled
           - other-status (includes all tiers above enrolled status)
-        countryCode:
-          type: string
-          description: Passenger's residence country defined in ISO 3166-1 alpha-2.
-          example: US
-          maxLength: 2
-          pattern: ^[A-Z]{2}$
-        dateOfBirth:
-          type: string
-          description: >-
-            The date of birth of the passenger.
-
-            Format YYYYMMDD
-          example: "20000811"
-          maxLength: 8
-          pattern: ^(19[0-9]{2}|20[0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$
         firstName:
           type: string
           description: >-
@@ -5652,127 +5176,16 @@ components:
           type: string
           description: Shopping cart item description
           x-trim-at: 116
-    shippingDetail:
-      type: object
-      description: Object containing the details of the shipping of the order
-      properties:
-        shippingCost:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
-        shippingCostTax:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
-    amount:
-      type: integer
-      format: int64
-      description: >-
-        Amount in the smallest currency unit, i.e.:
-
-
-        * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-        * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-        * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
-      example: 1000
-      maximum: 999999999999
-      minimum: 0
-    lineItemDetail:
-      type: object
-      description: Object containing lineItemIds and quantities for capture/refund/cancellation.
-      properties:
-        lineItemId:
-          $ref: '#/components/schemas/lineItemId'
-          description: The unique ID for each line item.
-        quantity:
-          type: integer
-          format: int64
-          description: 'Quantity of the units being purchased, should be greater than zero Note: Must not be all spaces or all zeros'
-          example: 3
-          maximum: 9999
-          minimum: 0
-        discountAmount:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
-    lineItemId:
-      type: string
-      description: The unique ID for each line item.
-      example: "10253"
-    lineItemDetails:
-      type: array
-      description: List of lineItemIds and quantities for capture/refund/cancellation.
-      items:
-        $ref: '#/components/schemas/lineItemDetail'
-        description: Object containing lineItemIds and quantities for capture/refund/cancellation.
-      example:
-      - lineItemId: "10253"
-        quantity: 3
-        discountAmount: 100
     orderLineDetails:
       type: object
       description: Object containing additional information that when supplied can have a beneficial effect on the discountrates
       properties:
         discountAmount:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
-        taxPercentage:
-          $ref: '#/components/schemas/taxPercentage'
-          description: tax percentage, in hundredths of a percent. For example, for a tax percentage of 21%, this field should be set to 2100. Omit if not applicable or not known.
-        taxAmount:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
+          type: integer
+          format: int64
+          description: Discount on the line item, with the last two digits implied as decimal places
+          maximum: 2147483647
+          minimum: 0
         productCode:
           type: string
           description: Product or UPC Code
@@ -5805,6 +5218,12 @@ components:
 
             Note: Must not be all spaces or all zeros
           maximum: 9999
+          minimum: 0
+        taxAmount:
+          type: integer
+          format: int64
+          description: Tax on the line item, with the last two digits implied as decimal places
+          maximum: 2147483647
           minimum: 0
         unit:
           type: string
@@ -5865,8 +5284,6 @@ components:
              * 1504 Konbini - 80 characters
 
             All other payment products do not support a descriptor.
-          deprecated: true
-          x-deprecated-by: softDescriptor
         merchantReference:
           $ref: '#/components/schemas/merchantReference'
           description: >-
@@ -5879,9 +5296,6 @@ components:
         operationGroupReference:
           $ref: '#/components/schemas/operationGroupReference'
           description: An identifier for a group of transactions. This reference helps to link multiple related transactions together, facilitating easier reconciliation and tracking.
-        structuredCreditorReference:
-          $ref: '#/components/schemas/structuredCreditorReference'
-          description: Creditor Reference to use where applicable for invoicing related to the transaction, in accordance with ISO 11649. Might require merchant specific setup to enable and is subject to agreement with the acquirer.
     shipping:
       type: object
       description: Object containing information regarding shipping / delivery
@@ -5931,31 +5345,17 @@ components:
              * overnight = For overnight deliveries
              * 2-day-or-more = For two day or more delivery time
         shippingCost:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
+          type: integer
+          format: int64
+          description: Cost associated with the shipping of the order.
+          maximum: 2147483647
+          minimum: 0
         shippingCostTax:
-          $ref: '#/components/schemas/amount'
-          description: >-
-            Amount in the smallest currency unit, i.e.:
-
-
-            * EUR is a 2-decimals currency, the value 1234 will result in EUR 12.34
-
-
-            * KWD is a 3-decimals currency, the value 1234 will result in KWD 1.234
-
-
-            * JPY is a zero-decimal currency, the value 1234 will result in JPY 1234
+          type: integer
+          format: int64
+          description: Tax amount of the shipping cost.
+          maximum: 2147483647
+          minimum: 0
     shippingMethod:
       type: object
       description: Object containing information regarding shipping method
@@ -5996,11 +5396,6 @@ components:
           - merchant-defined-7
           - merchant-defined-8
           - merchant-defined-9
-    taxPercentage:
-      type: number
-      format: decimal
-      description: tax percentage, in hundredths of a percent. For example, for a tax percentage of 21%, this field should be set to 2100. Omit if not applicable or not known.
-      example: 2100
     shoppingCart:
       type: object
       description: Shopping cart data, including items and specific amounts.
@@ -6191,9 +5586,7 @@ components:
             These tokens might not be valid anymore. The validity of tokens can be verified using the [Get token](#operation/GetTokenApi) endpoint.
           items:
             type: string
-          example:
-          - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-          - b7042dff-1fbd-46d2-9ecb-bddaa2c31165
+          example: "['0a7042d6-bf24-40b6-85c5-dec24b9dd1d1','b7042dff-1fbd-46d2-9ecb-bddaa2c31165']"
         expiredCardTokens:
           type: array
           description: >-
@@ -6204,166 +5597,7 @@ components:
             If you are using the option "hideTokenFields", these tokens should not be proposed to the customers.
           items:
             type: string
-          example:
-          - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-          - b7042dff-1fbd-46d2-9ecb-bddaa2c31165
-    createHostedFieldsSessionRequest:
-      type: object
-      description: Object containing data required to create hosted fields session
-      properties:
-        locale:
-          $ref: '#/components/schemas/locale'
-          description: 'Locale used in the GUI towards the consumer. '
-        tokens:
-          $ref: '#/components/schemas/tokens'
-          description: These are your stored tokens that you can reuse during the session.
-      required:
-      - locale
-    createHostedFieldsSessionResponse:
-      type: object
-      description: Object containing data required to initialize hosted fields iframes
-      properties:
-        sdkUrl:
-          type: string
-          description: The URL points to the hosted fields SDK.
-          example: https://assets.cdn.v-psp.com/hf/3f2504e04f8911d39a0c0305e82c3301/js/sdpx-hostedfields-sdk.js
-          maxLength: 1024
-        sdkSri:
-          $ref: '#/components/schemas/sri'
-          description: This is the cryptographic hash used for Subresource Integrity validation.
-        invalidTokens:
-          type: array
-          description: This is a list of tokens that failed validation.
-          items:
-            type: string
-            description: This is a card token that failed validation.
-            example: 0a7042d6-bf24-40b6-85c5-dec24b9dd1d2
-            maxLength: 50
-          example:
-          - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d2
-          - b7042dff-1fbd-46d2-9ecb-bddaa2c31168
-          maxLength: 1024
-        sessionData:
-          $ref: '#/components/schemas/sessionData'
-          description: This contains the data required to initialize the Hosted Fields SDK.
-      required:
-      - sdkSri
-      - sdkUrl
-      - sessionData
-    sessionData:
-      type: object
-      description: This contains the data required to initialize the Hosted Fields SDK.
-      properties:
-        sessionToken:
-          type: string
-          description: The JWT token used to authorize calls between iframes and server
-          example: eyJhbGciO.eyJzdWIiOiIxMjM0NTY3.sQ5p0j9
-          maxLength: 40
-        hostedFieldsSessionId:
-          type: string
-          description: Id of the created session
-          example: 3f2-504e0-4f89-11d3-9a0c-0305e82c3301
-          maxLength: 40
-        platformUrl:
-          type: string
-          description: This is the URL to Worldline's payment platform.
-          example: https://payment.direct.worldline-solutions.com
-          maxLength: 1024
-        locale:
-          $ref: '#/components/schemas/locale'
-          description: 'Locale used in the GUI towards the consumer. '
-        tokens:
-          type: array
-          description: This is a list of validated, previously stored card tokens available for use in this checkout session.
-          items:
-            type: string
-            description: This is a validated card token available for later use.
-            example: 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-            maxLength: 50
-          example:
-          - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-          - b7042dff-1fbd-46d2-9ecb-bddaa2c31165
-          maxLength: 1024
-    getHostedFieldsSessionResponse:
-      type: object
-      description: Object containing hosted fields session data
-      properties:
-        sessionId:
-          type: string
-          description: The ID of the hosted fields session.
-          example: 3f2504e04f8911d39a0c0305e82c3301
-          minLength: 32
-          maxLength: 32
-        token:
-          $ref: '#/components/schemas/tokenInfo'
-          description: Object containing token information that is used in the hosted fields session
-      required:
-      - sessionId
-    tokenInfo:
-      type: object
-      description: Object containing token information that is used in the hosted fields session
-      properties:
-        tokenId:
-          type: string
-          description: ID of the token
-          example: 2a7e4108-f466-434c-9700-5255436b669c
-          minLength: 36
-          maxLength: 36
-        expiryDate:
-          type: string
-          description: The expiry date of the network token.
-          example: "0529"
-          minLength: 4
-          maxLength: 4
-          pattern: ^[0-9]{4}$
-        maskedPan:
-          type: string
-          description: The masked Primary Account Number (PAN).
-          example: 483247XXXXXX0249
-          maxLength: 19
-        isTemporary:
-          type: boolean
-          description: Temporary tokens have a lifespan of two hours and can only be used once.
-      required:
-      - tokenId
-      - expiryDate
-      - maskedPan
-      - isTemporary
-    problemDetailsResponse:
-      type: object
-      description: Object containing the problem details when an error occurs
-      properties:
-        type:
-          type: string
-          format: uri
-          description: A URI reference that identifies the problem type.
-          example: https://api.example.com/errors/session-not-found
-          maxLength: 2048
-          pattern: ^https?:\/\/[^\s]+$
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type.
-          example: Session Not Found
-          maxLength: 200
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code.
-          example: 404
-          maximum: 599
-          minimum: 100
-        detail:
-          type: string
-          description: A human-readable explanation specific to this occurrence of the problem.
-          example: The requested session with ID '3f2504e0-4f89-11d3-9a0c-0305e82c3301' could not be found.
-          maxLength: 1000
-        instance:
-          type: string
-          format: uri
-          description: A URI reference that identifies the specific occurrence of the problem.
-          example: https://api.example.com/sessions/3f2504e0-4f89-11d3-9a0c-0305e82c3301
-          maxLength: 2048
-          pattern: ^https?:\/\/[^\s]+$
+          example: "['0a7042d6-bf24-40b6-85c5-dec24b9dd1d1','b7042dff-1fbd-46d2-9ecb-bddaa2c31165']"
     cardPaymentMethodSpecificInputBase:
       type: object
       description: Object containing the specific input details for card payments
@@ -6460,9 +5694,6 @@ components:
             The platform must collect and submit the retailer’s country and regional information in accordance with card scheme requirements.
 
             In some cases, Visa may treat specific regions—such as EU member states—as a single country entity for regulatory and reporting purposes.
-        autoCapture:
-          $ref: '#/components/schemas/autoCapture'
-          description: Container for all auto capture-related settings.
     paymentProduct5100SpecificInput:
       type: object
       description: Object containing specific input required for Cpay payments.
@@ -6920,15 +6151,6 @@ components:
         paymentProduct840SpecificInput:
           $ref: '#/components/schemas/redirectPaymentProduct840SpecificInput'
           description: Object containing specific input required for PayPal payments (Payment product ID 840)
-        paymentProduct3103SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct3103SpecificInput'
-          description: Object containing specific input for CadoCarte payments (Payment product ID 3103)
-        paymentProduct3116SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct3116SpecificInput'
-          description: Object containing specific input for SpiritOfCadeau payments (Payment product ID 3116)
-        paymentProduct5601SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct5601SpecificInput'
-          description: Object containing specific input for Cadhoc payments (Payment product ID 5601)
         paymentProduct3302SpecificInput:
           $ref: '#/components/schemas/redirectPaymentProduct3302SpecificInput'
           description: Object containing specific input required for Klarna PayLater payment (Payment product ID 3302)
@@ -6965,21 +6187,12 @@ components:
         paymentProduct3204SpecificInput:
           $ref: '#/components/schemas/redirectPaymentProduct3204SpecificInput'
           description: BLIK (payment product 3204) specific details
-        paymentProduct5301SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct5301SpecificInput'
-          description: PAYONE Buy Now, Pay Later (payment product 5301) specific details
         paymentProduct5412SpecificInput:
           $ref: '#/components/schemas/redirectPaymentProduct5412SpecificInput'
           description: Object containing specific input required for Chèque-Vacances Connect payments via ANCV (Payment product ID 5412)
         paymentProduct11SpecificInput:
           $ref: '#/components/schemas/redirectPaymentProduct11SpecificInput'
           description: Object contains the inputs required to perform a bank transfer using payment product 11.
-        paymentProduct5407SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct5407SpecificInput'
-          description: TWINT (payment product 5407) specific details
-        paymentProduct3112SpecificInput:
-          $ref: '#/components/schemas/redirectPaymentProduct3112SpecificInput'
-          description: Object containing specific input required for Illicado payments (Payment product ID 3112)
         redirectionData:
           $ref: '#/components/schemas/redirectionData'
           description: Object containing browser specific redirection related data
@@ -7077,13 +6290,13 @@ components:
         secondInstallmentPaymentDate:
           type: string
           description: The date of the second installment (YYYYMMDD)
-          example: "20261231"
+          example: 20261231
           maxLength: 8
           pattern: ^20\d{6}$
         birthZipCode:
           type: string
           description: The zip code of the address where the customer was born
-          example: "59800"
+          example: 59800
           maxLength: 10
         birthCity:
           type: string
@@ -7115,12 +6328,6 @@ components:
           - call_center
           - point_of_sale
           example: desktop
-        transactionExpirationDateTime:
-          type: string
-          format: date-time
-          description: The date and time after which the transaction will expire in UTC (format YYYY-MM-DDTHH:mm:ssZ)
-          example: 2025-01-01T14:14:15Z
-          pattern: ^2\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d(.\d+)?Z$
     marketPlace:
       type: object
       description: >
@@ -7153,7 +6360,7 @@ components:
           type: string
           format: date
           description: The date of the second installment (YYYYMMDD)
-          example: "20261231"
+          example: 20261231
           pattern: ^20\d{6}$
     redirectPaymentProduct3204SpecificInput:
       type: object
@@ -7162,39 +6369,12 @@ components:
         blikCode:
           type: string
           description: Code required for BLIK payments generated by the buyer's bank application
-          example: "123456"
+          example: 123456
           pattern: ^\d{6}$
         aliasLabel:
           type: string
           description: A name that will allow the consumer to identify his/her account in the your web shop (e.g., a masked email address or customer number) after he/she accepts the tokenization in his banking app. The label is especially important if the User has more than one account in the same web shop. This field is mandatory in tokenization use cases.
           example: johndoe@example.com
-    redirectPaymentProduct5301SpecificInput:
-      type: object
-      description: PAYONE Buy Now, Pay Later (payment product 5301) specific details
-      properties:
-        paymentMethodType:
-          type: string
-          description: '* invoice - The transaction is an invoice payment, transaction amount should be greater than €10 and less than €1500. * direct_debit - The transaction is a direct debit payment, transaction amount should be greater than €10 and less than €1500.'
-          enum:
-          - invoice
-          - direct_debit
-    redirectPaymentProduct5407SpecificInput:
-      type: object
-      description: TWINT (payment product 5407) specific details
-      properties:
-        paymentProduct5704AutoCapture:
-          type: object
-          description: Object containing the auto capture configuration for the payment.
-          properties:
-            delayInMinutes:
-              type: integer
-              format: int32
-              description: Delay in minutes between authorization and automatic capture for this request. Minimum value is 0 minutes, maximum value is 10,080 minutes (7 days).
-              example: 60
-              maximum: 10080
-              minimum: 0
-          required:
-          - delayInMinutes
     redirectPaymentProduct11SpecificInput:
       type: object
       description: Object contains the inputs required to perform a bank transfer using payment product 11.
@@ -7203,7 +6383,7 @@ components:
           type: string
           format: date
           description: The first installment date must be given in the YYYYMMDD format.
-          example: "20261231"
+          example: 20261231
           pattern: ^20\d{6}$
     existingUniqueMandateReference:
       type: string
@@ -7257,7 +6437,7 @@ components:
             * RECURRING
         returnUrl:
           $ref: '#/components/schemas/mandateReturnUrl'
-          description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS" or "AIS".
+          description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS".
         signatureType:
           $ref: '#/components/schemas/mandateSignatureType'
           description: >-
@@ -7268,8 +6448,6 @@ components:
             * SMS
 
             * TICK_BOX
-
-            * AIS
 
 
             Refer to the support page to determine the applicable signature types.
@@ -7328,7 +6506,7 @@ components:
             * RECURRING
         returnUrl:
           $ref: '#/components/schemas/mandateReturnUrl'
-          description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS" or "AIS".
+          description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS".
         signatureType:
           $ref: '#/components/schemas/mandateSignatureType'
           description: >-
@@ -7339,8 +6517,6 @@ components:
             * SMS
 
             * TICK_BOX
-
-            * AIS
 
 
             Refer to the support page to determine the applicable signature types.
@@ -7435,7 +6611,7 @@ components:
       - RECURRING
     mandateReturnUrl:
       type: string
-      description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS" or "AIS".
+      description: Return URL to use if the mandate signing requires redirection. Required for S2S Create Payment if and only if the signatureType is "SMS".
       example: https://example-mandate-signing-url.com
     mandateSignatureType:
       type: string
@@ -7448,15 +6624,12 @@ components:
 
         * TICK_BOX
 
-        * AIS
-
 
         Refer to the support page to determine the applicable signature types.
       enum:
       - UNSIGNED
       - SMS
       - TICK_BOX
-      - AIS
     uniqueMandateReference:
       type: string
       description: The unique identifier of the mandate
@@ -7531,10 +6704,10 @@ components:
             Required for Create and Update token.
 
             Required for Create mandate and Create payment with mandate calls.
-
-            It is optional when the mandate signature type is "AIS"; otherwise, it is mandatory.
           example: BE01 0123 4567 8910
           maxLength: 50
+      required:
+      - iban
     mandateContactDetails:
       type: object
       description: Object containing email address
@@ -7576,7 +6749,7 @@ components:
         houseNumber:
           type: string
           description: House number
-          example: "13"
+          example: 13
           maxLength: 15
         street:
           type: string
@@ -7596,7 +6769,7 @@ components:
             Required for Create mandate and Create payment calls.
 
             Required for Create hostedCheckout calls where the IBAN is also provided.
-          example: "84536"
+          example: 84536
           maxLength: 10
     mandateAddressResponse:
       type: object
@@ -7619,7 +6792,7 @@ components:
         zip:
           type: string
           description: Zip code
-          example: "84536"
+          example: 84536
     mandatePersonalInformation:
       type: object
       description: >-
@@ -7775,7 +6948,7 @@ components:
       properties:
         createdPaymentOutput:
           $ref: '#/components/schemas/createdPaymentOutput'
-          description: This object will return the details of the payment after the payment is cancelled by the customer or by expiration, rejected or authorized
+          description: This object will return the details of the payment after the payment is cancelled by the customer, rejected or authorized
         status:
           type: string
           description: >-
@@ -7785,7 +6958,7 @@ components:
 
             * PAYMENT_CREATED - A payment has been created
 
-            * CANCELLED_BY_CONSUMER - The HostedCheckout session have been cancelled by the customer or by expiration
+            * CANCELLED_BY_CONSUMER - The HostedCheckout session have been cancelled by the customer
           enum:
           - PAYMENT_CREATED
           - IN_PROGRESS
@@ -7807,7 +6980,7 @@ components:
             * UPDATED - The token has been updated
     createdPaymentOutput:
       type: object
-      description: This object will return the details of the payment after the payment is cancelled by the customer or by expiration, rejected or authorized
+      description: This object will return the details of the payment after the payment is cancelled by the customer, rejected or authorized
       properties:
         payment:
           $ref: '#/components/schemas/paymentResponse'
@@ -7828,9 +7001,6 @@ components:
         paymentOutput:
           $ref: '#/components/schemas/paymentOutput'
           description: Object containing payment details
-        operationOutput:
-          $ref: '#/components/schemas/operationOutput'
-          description: Object containing operation details
         status:
           $ref: '#/components/schemas/statusValue'
           description: Current high-level status of the payment in a human-readable form.
@@ -7904,13 +7074,6 @@ components:
         payment:
           $ref: '#/components/schemas/paymentResponse'
           description: This object holds the properties related to the payment.
-    importCofSeriesResponse:
-      type: object
-      description: This object contains a unique payment ID generated based on the provided SRD (Scheme Reference Data).
-      properties:
-        paymentId:
-          $ref: '#/components/schemas/paymentId'
-          description: This is our unique payment transaction identifier.
     subsequentPaymentRequest:
       type: object
       properties:
@@ -7991,9 +7154,6 @@ components:
         feedbacks:
           $ref: '#/components/schemas/feedbacks'
           description: This section will contain feedback Urls to provide feedback on the payment.
-        omnichannelPaymentSpecificInput:
-          $ref: '#/components/schemas/omnichannelPaymentSpecificInput'
-          description: This object contains additional payment details for omnichannel merchants.
       required:
       - order
     encryptedCustomerInput:
@@ -8168,9 +7328,6 @@ components:
           - default
           - alternative
           - notApplicable
-        autoCapture:
-          $ref: '#/components/schemas/autoCapture'
-          description: Container for all auto capture-related settings.
     paymentProduct3208SpecificInput:
       type: object
       description: Object containing specific input required for OneyDuplo Leroy Merlin payments.
@@ -8248,9 +7405,6 @@ components:
             The platform must collect and submit the retailer’s country and regional information in accordance with card scheme requirements.
 
             In some cases, Visa may treat specific regions—such as EU member states—as a single country entity for regulatory and reporting purposes.
-        autoCapture:
-          $ref: '#/components/schemas/autoCapture'
-          description: Container for all auto capture-related settings.
     card:
       type: object
       description: Object containing card details
@@ -8406,7 +7560,7 @@ components:
           description: The amount to be authenticated. This field should be populated if the amount to be authenticated differs from the amount to be authorized (by default they are considered equal). Amount in cents and always having 2 decimals.
         deviceChannel:
           $ref: '#/components/schemas/deviceChannel'
-          description: Determines whether the call is coming from an application or from a browser * AppBased - Call is coming from an application. * Browser - Call is coming from a browser * ThreeDSRequestorInitiated - The authentication is initiated by the 3DS Requestor (merchant) without direct cardholder interaction, such as for recurring or merchant-initiated transactions.
+          description: Determines whether the call is coming from an application or from a browser * AppBased - Call is coming from an application. * Browser - Call is coming from a browser
     exemptionRequest:
       type: string
       description: >-
@@ -8653,7 +7807,7 @@ components:
           description: >-
             Expiry date of the card Format: MMYY.
              * For Apple Pay, maps to the applicationExpirationDate property in the encrypted payment data. This property is formatted as YYMMDD, so this needs to be converted to get a correctly formatted expiry date
-          example: "0529"
+          example: 0529
           maxLength: 4
       required:
       - expiryDate
@@ -8821,7 +7975,7 @@ components:
         amount:
           type: string
           description: A required value that’s the monetary amount of the line item.
-          example: "20.00"
+          example: 20.00
         paymentTiming:
           type: string
           description: The time that the payment occurs as part of a successful transaction.
@@ -8897,42 +8051,6 @@ components:
              * true = When this flag is enabled the field orderID is returned by CreatePayment call and should be utilized in case merchant has integrated JS SDK button on their S2S implementation
 
             Default value is false.
-    redirectPaymentProduct3103SpecificInput:
-      type: object
-      description: Object containing specific input for CadoCarte payments (Payment product ID 3103)
-      properties:
-        completeRemainingPaymentAmount:
-          $ref: '#/components/schemas/completeRemainingPaymentAmount'
-          description: >
-            Determines how the remaining payment amount is handled if the initial payment is insufficient.
-
-            - `true`: The payment process will continue on our side, allowing the customer to pay the outstanding amount using a different payment method.
-
-            - `false`: Merchant must create and process a separate payment for the remaining amount independently.
-    redirectPaymentProduct3116SpecificInput:
-      type: object
-      description: Object containing specific input for SpiritOfCadeau payments (Payment product ID 3116)
-      properties:
-        completeRemainingPaymentAmount:
-          $ref: '#/components/schemas/completeRemainingPaymentAmount'
-          description: >
-            Determines how the remaining payment amount is handled if the initial payment is insufficient.
-
-            - `true`: The payment process will continue on our side, allowing the customer to pay the outstanding amount using a different payment method.
-
-            - `false`: Merchant must create and process a separate payment for the remaining amount independently.
-    redirectPaymentProduct5601SpecificInput:
-      type: object
-      description: Object containing specific input for Cadhoc payments (Payment product ID 5601)
-      properties:
-        completeRemainingPaymentAmount:
-          $ref: '#/components/schemas/completeRemainingPaymentAmount'
-          description: >
-            Determines how the remaining payment amount is handled if the initial payment is insufficient.
-
-            - `true`: The payment process will continue on our side, allowing the customer to pay the outstanding amount using a different payment method.
-
-            - `false`: Merchant must create and process a separate payment for the remaining amount independently.
     redirectPaymentProduct3302SpecificInput:
       type: object
       description: Object containing specific input required for Klarna PayLater payment (Payment product ID 3302)
@@ -9011,9 +8129,9 @@ components:
       properties:
         beneficiaryId:
           type: string
-          description: The customer's 11-digit CV Connect ID, or their e-mail address on file with ANCV. The customer will be able to confirm their ID before proceeding with payment.
-          example: "12345678901"
-          pattern: ^(?:[0-9]{11}|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})$
+          description: The 11 digits CV Connect ID of the customer. If this ID is not provided, the customer's e-mail address will be used, if available. The customer will be able to confirm their ID before proceeding with payment.
+          example: 12345678901
+          pattern: ^[0-9]{11}$
         adjustableAmount:
           type: boolean
           description: If true, the customer can adjust the portion of the total amount paid using this payment method in the ANCV app at authentication time.
@@ -9052,18 +8170,6 @@ components:
                                    paymentProduct3203SpecificOutput. Note that the payer must accept to provide his
                                    billing and shipping address during checkout in the PostFinancePay application.
                                    If not, the payment will be declined.
-    redirectPaymentProduct3112SpecificInput:
-      type: object
-      description: Object containing specific input required for Illicado payments (Payment product ID 3112)
-      properties:
-        completeRemainingPaymentAmount:
-          $ref: '#/components/schemas/completeRemainingPaymentAmount'
-          description: >
-            Determines how the remaining payment amount is handled if the initial payment is insufficient.
-
-            - `true`: The payment process will continue on our side, allowing the customer to pay the outstanding amount using a different payment method.
-
-            - `false`: Merchant must create and process a separate payment for the remaining amount independently.
     operationOutput:
       type: object
       description: Object containing operation details
@@ -9280,9 +8386,6 @@ components:
         amountOfMoney:
           $ref: '#/components/schemas/amountOfMoney'
           description: Object containing amount and ISO currency code attributes
-        isFinal:
-          $ref: '#/components/schemas/isFinal'
-          description: This property indicates whether this will be the final operation. The default value for this property is false.
         references:
           $ref: '#/components/schemas/paymentReferences'
           description: 'Object that holds all reference properties that are linked to this transaction. **Deprecated for capture/refund**: Use operationReferences instead.'
@@ -9305,9 +8408,6 @@ components:
         refundRedirectPaymentMethodSpecificInput:
           $ref: '#/components/schemas/refundRedirectPaymentMethodSpecificInput'
           description: Object containing the specific input details for refunds for redirection payment methods.
-        lineItemDetails:
-          $ref: '#/components/schemas/lineItemDetails'
-          description: List of lineItemIds and quantities for capture/refund/cancellation.
     refundRedirectPaymentMethodSpecificInput:
       type: object
       description: Object containing the specific input details for refunds for redirection payment methods.
@@ -9421,28 +8521,9 @@ components:
         isTemporary:
           type: boolean
           description: Temporary tokens have a lifespan of two hours and can only be used once.
-        crmToken:
-          $ref: '#/components/schemas/crmToken'
-          description: The CRM (Customer Relationship Management) token group. CRM tokens are available to enhance knowledge of a merchant's customers by attempting to identify the customer.
       required:
       - id
       - paymentProductId
-    crmToken:
-      type: object
-      description: The CRM (Customer Relationship Management) token group. CRM tokens are available to enhance knowledge of a merchant's customers by attempting to identify the customer.
-      properties:
-        uniqueCardIdentifier:
-          type: string
-          description: A unique identifier for the card that was tokenized. This identifier remains the same for a given card, even if the tokenID may differ. The unique card identifier cannot be used to trigger a payment.
-          example: AgAlAzfk3S4s1MIjanb3pDiNyBRxRDWkwwcPqyfbV+w=
-          maxLength: 44
-          pattern: ^[A-Za-z0-9+/=]+$
-        uniqueAccountIdentifier:
-          type: string
-          description: A unique identifier that remains constant across different formats of the same card (whether used via wallets such as Apple Pay, Google Pay, etc., or the physical card), even if the tokenID may differ. The unique account identifier cannot be used to trigger a payment.
-          example: AgAlAzfk3S4s1MIjanb3pDiNyBRxRDWkwwcPqyfbV+w=
-          maxLength: 44
-          pattern: ^[A-Za-z0-9+/=]+$
     externalTokenLinked:
       type: object
       properties:
@@ -10112,45 +9193,6 @@ components:
           type: string
           description: Name of the issuing bank as it should be presented to the customer
           example: Rabobank
-    paymentProductSessionRequest:
-      type: object
-      description: This object contains all the details needed to create a payment session.
-      properties:
-        paymentProductSession302SpecificInput:
-          $ref: '#/components/schemas/paymentProductSession302SpecificInput'
-          description: The specific input details needed to create a payment product session for Apple Pay (payment product 302).
-    paymentProductSessionResponse:
-      type: object
-      description: This object contains all the details of the created payment product session.
-      properties:
-        paymentProductSession302SpecificOutput:
-          $ref: '#/components/schemas/paymentProductSession302SpecificOutput'
-          description: The specific output details of the created payment product session for Apple Pay (payment product 302).
-    paymentProductSession302SpecificInput:
-      type: object
-      description: The specific input details needed to create a payment product session for Apple Pay (payment product 302).
-      properties:
-        domainName:
-          type: string
-          description: The fully qualified domain name of the web page that will host the Apple Pay session.
-          example: www.example.com
-          maxLength: 255
-        displayName:
-          type: string
-          description: A human-readable name for the merchant, as it would be displayed to the user within the Apple Pay interface.
-          example: Example Store
-          maxLength: 64
-      required:
-      - domainName
-      - displayName
-    paymentProductSession302SpecificOutput:
-      type: object
-      description: The specific output details of the created payment product session for Apple Pay (payment product 302).
-      properties:
-        session:
-          type: string
-          description: The payment session object that must be passed to the Apple Pay API on the client side to initialize the Apple Pay payment sheet.
-          example: '{"epochTimestamp":1768490415690,"expiresAt":1768494015690,"merchantSessionIdentifier":"SS ...'
     challengeIndicator:
       type: string
       description: >-
@@ -10168,28 +9210,11 @@ components:
     hostedCheckoutId:
       type: string
       description: The ID of the Hosted Checkout Session in which the payment was made.
-      example: "3066019730"
+      example: 3066019730
     locale:
       type: string
       description: 'Locale used in the GUI towards the consumer. '
       maxLength: 6
-    sri:
-      type: string
-      description: This is the cryptographic hash used for Subresource Integrity validation.
-      example: sha384-XCQUF1TNhM44tneeyVGlo+triTEFC2YowDNdWtvPgkyzCHs71r55TuDlZdeOdg3j
-      maxLength: 88
-    tokens:
-      type: array
-      description: These are your stored tokens that you can reuse during the session.
-      items:
-        type: string
-        description: Stored tokens that may be reused in the session.
-        example: 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-        maxLength: 50
-      example:
-      - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-      - b7042dff-1fbd-46d2-9ecb-bddaa2c31165
-      maxLength: 1024
     variant:
       type: string
       description: You can force the use of a custom template by specifying it in the variant field. This allows you to test out the effect of certain changes to your payment pages in a controlled manner. Please note that you need to specify the filename of the template or customization.
@@ -10210,11 +9235,6 @@ components:
       description: An identifier for a group of transactions. This reference helps to link multiple related transactions together, facilitating easier reconciliation and tracking.
       example: your-group-reference-6372
       maxLength: 50
-    structuredCreditorReference:
-      type: string
-      description: Creditor Reference to use where applicable for invoicing related to the transaction, in accordance with ISO 11649. Might require merchant specific setup to enable and is subject to agreement with the acquirer.
-      example: RF18000000000539007547034
-      pattern: ^RF\d{2}[0-9A-Za-z]{1,21}$
     paymentProductId:
       type: integer
       format: int32
@@ -10269,7 +9289,7 @@ components:
     houseNumber:
       type: string
       description: House number
-      example: "3"
+      example: 3
       x-trim-at: 10
     state:
       type: string
@@ -10360,9 +9380,7 @@ components:
       description: Tokens that are submitted in the request are validated. In case any of the tokens can't be used anymore they are returned in this array. You should most likely remove those tokens from your system.
       items:
         type: string
-      example:
-      - 0a7042d6-bf24-40b6-85c5-dec24b9dd1d1
-      - b7042dff-1fbd-46d2-9ecb-bddaa2c31165
+      example: "['0a7042d6-bf24-40b6-85c5-dec24b9dd1d1', 'b7042dff-1fbd-46d2-9ecb-bddaa2c31165']"
     redirectUrl:
       type: string
       description: The full hosted checkout URL as generated by our system. Use this URL to redirect your customer to the hosted checkout page.
@@ -10395,133 +9413,6 @@ components:
         * 5 - represents a fraud rate greater than 25 bps.
       maximum: 99
       minimum: 0
-    importCofSeriesRequest:
-      type: object
-      description: Object containing the data required to import a COF Series token.
-      properties:
-        card:
-          $ref: '#/components/schemas/cardDataWithoutCvv'
-          description: Object containing card details, which should be used if a tokenID is not provided.
-        tokenId:
-          type: string
-          description: ID of the token to use to create the payment series.
-          example: token-123456789
-          maxLength: 50
-        paymentProductId:
-          $ref: '#/components/schemas/paymentProductId'
-          description: Payment product identifier - Please see Products documentation for a full overview of possible values.
-        schemeReferenceData:
-          type: string
-          description: Scheme Reference Data (SRD) used for scheme-level routing or identification.
-          example: srd-00123456789
-          maxLength: 50
-        transactionLinkIdentifier:
-          type: string
-          description: The Transaction Link Identifier (TLID) of the original Consumer-Initiated Transaction (CIT).
-          example: "00123456789"
-          maxLength: 36
-        currencyCode:
-          type: string
-          description: Three-letter ISO currency code representing the currency for the initial payment.
-          example: EUR
-          maxLength: 3
-          pattern: ^[A-Z]{3}$
-      required:
-      - schemeReferenceData
-    csrRequest:
-      type: object
-      description: Object containing the necessary information to create a new Certificate Signing Request (CSR). This includes the encoded data required for generating a digital certificate, which encompasses the public key and the identity details of the requester.
-      properties:
-        csr:
-          type: string
-          description: A Certificate Signing Request (CSR) string that contains the encoded information necessary for generating a digital certificate, including the public key and identity details of the requester.
-          example: >
-            -----BEGIN CERTIFICATE REQUEST-----
-
-            MIIBVTCBvwIBADBZMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExEDAOBgNVBAcM
-
-            B1NhbiBKb3NlMQ8wDQYDVQQKDAZFeGFtcGxlMQ8wDQYDVQQLDAZFeGFtcGxlMQ8w
-
-            DQYDVQQDDAZFeGFtcGxlMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALe4...
-
-            -----END CERTIFICATE REQUEST-----
-          pattern: ^-----BEGIN CERTIFICATE REQUEST-----\n([A-Za-z0-9+/=\n]+)-----END CERTIFICATE REQUEST-----\n$
-      required:
-      - csr
-    detokenizedTokenResponse:
-      type: object
-      description: This object holds the detokenization details.
-      properties:
-        token:
-          type: string
-          description: The unique identifier for the token is required for processing.
-          example: 7f08d423-2051-49ea-a2c9-f54fa7986ab3
-        cardHolderName:
-          type: string
-          description: The full name of the cardholder as it appears on the card.
-          example: John Doe
-        encryptedCardNumber:
-          type: string
-          description: The card number, encrypted and Base64 encoded for secure transport.
-          example: +EncryptedCardNumber/==
-        cardExpiryDate:
-          type: string
-          description: The expiration date of the card in MMYY format, where MM represents the two-digit month and YY represents the two-digit year. For example, a value of 0529 indicates that the card expires in May 2029.
-          example: "0529"
-          maxLength: 4
-        cardBrand:
-          type: string
-          description: The brand of the card (e.g., VISA, MasterCard).
-          example: VISA
-        schemeReferenceData:
-          type: string
-          description: Reference data associated with the payment scheme for the credentials on file.
-          example: schemeReferenceData123
-        paymentId:
-          type: string
-          description: The unique identifier for the payment associated with the token is necessary for tracking.
-          example: 1234567890_0
-    createCertificateResponse:
-      type: object
-      description: A response containing a signed certificate, which serves as proof of successful transaction processing and can be used for verification purposes by the merchant.
-      properties:
-        signedCertificate:
-          type: string
-          description: The signed certificate in base64 encoded string format, used for secure communication and authentication in API transactions.
-          example: U2lnbmVkQ2VydGlmaWNhdGUgaXMgYmFzZTY0IGVuY29kZWQgc3RyaW5n
-        certificateId:
-          type: string
-          description: A unique identifier for the certificate generated on the GoPay platform, facilitating effective tracking and management of detokenization actions.
-          example: 123e4567-e89b-12d3-a456-426614174000
-      required:
-      - signedCertificate
-      - certificateId
-    detokenizationResponse:
-      type: object
-      description: The response contains an array of detokenized data for the provided token IDs, which includes card details and expiration dates. All sensitive data is encrypted for security.
-      properties:
-        tokens:
-          type: array
-          description: The response contains an array of detokenized data for the provided token IDs, which includes card details and expiration dates.
-          items:
-            $ref: '#/components/schemas/detokenizedTokenResponse'
-            description: This object holds the detokenization details.
-    cardDataWithoutCvv:
-      type: object
-      description: Object containing card details, which should be used if a tokenID is not provided.
-      properties:
-        cardNumber:
-          $ref: '#/components/schemas/cardNumber'
-          description: The complete credit/debit card number (also known as the PAN) is always obfuscated in any of our responses.
-        expiryDate:
-          $ref: '#/components/schemas/expiryDate'
-          description: >-
-            Expiry date of the card
-
-            Format: MMYY
-        cardholderName:
-          $ref: '#/components/schemas/cardholderName'
-          description: The card holder's name on the card.
     createTokenRequest:
       type: object
       description: This object contains the token details.
@@ -10585,9 +9476,6 @@ components:
              * false - A token with the same card number already exists and is returned. Please note that the existing token has not been updated. When you want to update other data then the card number, you need to update data stored in the token explicitly, as data is never updated during the creation of a token.
         externalTokenLinked:
           $ref: '#/components/schemas/externalTokenLinked'
-        crmToken:
-          $ref: '#/components/schemas/crmToken'
-          description: The CRM (Customer Relationship Management) token group. CRM tokens are available to enhance knowledge of a merchant's customers by attempting to identify the customer.
       required:
       - token
       - card
@@ -10691,16 +9579,6 @@ components:
             Merchants may optionally include a user identifier to indicate which person within their organization initiated this request, enabling detailed audit trails and transaction accountability.
 
             If not provided, the field defaults to the merchant ID.
-    omnichannelPaymentSpecificInput:
-      type: object
-      description: This object contains additional payment details for omnichannel merchants.
-      properties:
-        operatorId:
-          $ref: '#/components/schemas/operatorId'
-          description: >-
-            Merchants may optionally include a user identifier to indicate which person within their organization initiated this request, enabling detailed audit trails and transaction accountability.
-
-            If not provided, the field defaults to the merchant ID.
     payoutStatus:
       type: string
       description: Current high-level status of the payout in a human-readable form.
@@ -10771,18 +9649,6 @@ components:
               * Gambling
               * Refund
               * Loyalty
-        payoutCardPaymentMethodSpecificOutput:
-          $ref: '#/components/schemas/payoutCardPaymentMethodSpecificOutput'
-          description: Object containing the card payment method details in a Payout context
-        references:
-          $ref: '#/components/schemas/paymentReferences'
-          description: 'Object that holds all reference properties that are linked to this transaction. **Deprecated for capture/refund**: Use operationReferences instead.'
-        transactionDate:
-          type: string
-          format: date-time
-          description: It is the server-side processing date and time of the transaction.
-          example: 2019-08-24T14:15:22Z
-          pattern: ^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d)(\.\d+)?Z?$
     payoutStatusOutput:
       type: object
       properties:
@@ -10950,12 +9816,6 @@ components:
         virtualCardIndicator:
           $ref: '#/components/schemas/virtualCardIndicator'
           description: Indicates whether the card is a virtual card
-        issuerPrincipalMemberCode:
-          $ref: '#/components/schemas/issuerPrincipalMemberCode'
-          description: Code that identifies the principal member within an issuer group
-        issuerPrincipalMemberName:
-          $ref: '#/components/schemas/issuerPrincipalMemberName'
-          description: Name that identifies the principal member within an issuer group
     iINDetail:
       type: object
       properties:
@@ -11066,12 +9926,6 @@ components:
         virtualCardIndicator:
           $ref: '#/components/schemas/virtualCardIndicator'
           description: Indicates whether the card is a virtual card
-        issuerPrincipalMemberCode:
-          $ref: '#/components/schemas/issuerPrincipalMemberCode'
-          description: Code that identifies the principal member within an issuer group
-        issuerPrincipalMemberName:
-          $ref: '#/components/schemas/issuerPrincipalMemberName'
-          description: Name that identifies the principal member within an issuer group
     cardType:
       type: string
       description: >-
@@ -11193,7 +10047,7 @@ components:
         disclaimerReceipt:
           type: string
           description: Card scheme disclaimer to print within cardholder receipt
-          example: ""
+          example: ''
           minLength: 1
           maxLength: 2000
         disclaimerDisplay:
@@ -11738,170 +10592,6 @@ components:
       required:
       - dateTime
       - type
-    submitBatchRequestBody:
-      type: object
-      description: Submit batch items, including batch metadata and an array of batch items.
-      properties:
-        header:
-          $ref: '#/components/schemas/batchMetadata'
-          description: Type of operation, including the merchant batch reference and the total count of items in the batch
-        createPayments:
-          type: array
-          description: Array of payment creation requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/createPaymentRequest'
-        capturePayments:
-          type: array
-          description: Array of capture payment requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/capturePaymentBatchRequest'
-        cancelPayments:
-          type: array
-          description: Array of cancel payment requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/cancelPaymentBatchRequest'
-        refundPayments:
-          type: array
-          description: Array of refund payment requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/refundPaymentBatchRequest'
-        subsequentPayments:
-          type: array
-          description: Array of subsequent payment requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/subsequentPaymentBatchRequest'
-        createPayouts:
-          type: array
-          description: Array of payout creation requests to be submitted in batch.
-          items:
-            $ref: '#/components/schemas/createPayoutRequest'
-            description: Object containing the payout details
-        createPaymentLinks:
-          type: array
-          description: An array containing multiple payment link generation requests that will be processed as a batch. Each item represents an individual payment link to be created.
-          items:
-            $ref: '#/components/schemas/createPaymentLinkRequest'
-            description: An object containing the Create PaymentLink request.
-      required:
-      - header
-    capturePaymentBatchRequest:
-      type: object
-      properties:
-        paymentId:
-          $ref: '#/components/schemas/paymentId'
-          description: This is our unique payment transaction identifier.
-        capture:
-          $ref: '#/components/schemas/capturePaymentRequest'
-      required:
-      - paymentId
-    cancelPaymentBatchRequest:
-      type: object
-      properties:
-        paymentId:
-          $ref: '#/components/schemas/paymentId'
-          description: This is our unique payment transaction identifier.
-        cancel:
-          $ref: '#/components/schemas/cancelPaymentRequest'
-      required:
-      - paymentId
-    refundPaymentBatchRequest:
-      type: object
-      properties:
-        paymentId:
-          $ref: '#/components/schemas/paymentId'
-          description: This is our unique payment transaction identifier.
-        refund:
-          $ref: '#/components/schemas/refundRequest'
-      required:
-      - paymentId
-    subsequentPaymentBatchRequest:
-      type: object
-      properties:
-        paymentId:
-          $ref: '#/components/schemas/paymentId'
-          description: This is our unique payment transaction identifier.
-        subsequent:
-          $ref: '#/components/schemas/subsequentPaymentRequest'
-      required:
-      - paymentId
-    submitBatchResponse:
-      type: object
-      description: The response returned after the submission of the batch. It contains details about the merchantBatchReference and the total number of batch items.
-      properties:
-        merchantBatchReference:
-          type: string
-          description: Unique batch reference submitted by the merchant.
-          example: merchant-batch-ref-123456789
-        totalCount:
-          type: integer
-          format: int32
-          description: The total number of batch items that were included in the submitted batch.
-          example: 100
-    batchMetadata:
-      type: object
-      description: Details about the batch, including the type of operation, the merchant batch reference, and the number of items in the batch.
-      properties:
-        operationType:
-          $ref: '#/components/schemas/operationType'
-          description: The specific operation type being requested for the batch.
-        merchantBatchReference:
-          type: string
-          description: Unique batch reference submitted by the merchant.
-          example: merchant-batch-ref-123456789
-          maxLength: 40
-        itemCount:
-          type: integer
-          format: int32
-          description: The total number of items included in the batch submission.
-          example: 100
-          maximum: 50000
-          minimum: 1
-      required:
-      - operationType
-      - merchantBatchReference
-      - itemCount
-    operationType:
-      type: string
-      description: The specific operation type being requested for the batch.
-      enum:
-      - CreatePayment
-      - CancelPayment
-      - CapturePayment
-      - RefundPayment
-      - SubsequentPayment
-      - CreatePayout
-      - CreatePaymentLink
-      example: CreatePayment
-    getBatchStatusResponse:
-      type: object
-      description: The response contains information about the batch including status of batch, the type of operation, the merchant batch reference and the number of items in the batch.
-      properties:
-        operationType:
-          $ref: '#/components/schemas/operationType'
-          description: The specific operation type being requested for the batch.
-        merchantBatchReference:
-          type: string
-          description: Unique batch reference submitted by the merchant.
-          example: merchant-batch-ref-123456789
-          maxLength: 40
-        itemCount:
-          type: integer
-          format: int32
-          description: The total number of items included in the batch submission.
-          example: 100
-          maximum: 50000
-          minimum: 1
-        status:
-          $ref: '#/components/schemas/batchStatus'
-          description: The status of the batch.
-    batchStatus:
-      type: string
-      description: The status of the batch.
-      enum:
-      - Submitted
-      - InProgress
-      - Processed
-      example: Submitted
     id:
       type: string
       description: ID of the token
@@ -11918,7 +10608,7 @@ components:
         The expiry date of the network token.
 
         Format: MMYY
-      example: "0529"
+      example: 0529
       maxLength: 4
     errors:
       type: array
@@ -11938,7 +10628,7 @@ components:
         Expiry date of the card
 
         Format: MMYY
-      example: "0529"
+      example: 0529
       maxLength: 4
     cardholderName:
       type: string
@@ -12072,11 +10762,10 @@ components:
       - failed
     deviceChannel:
       type: string
-      description: Determines whether the call is coming from an application or from a browser * AppBased - Call is coming from an application. * Browser - Call is coming from a browser * ThreeDSRequestorInitiated - The authentication is initiated by the 3DS Requestor (merchant) without direct cardholder interaction, such as for recurring or merchant-initiated transactions.
+      description: Determines whether the call is coming from an application or from a browser * AppBased - Call is coming from an application. * Browser - Call is coming from a browser
       enum:
       - appBased
       - browser
-      - threeDSRequestorInitiated
     descriptor:
       type: string
       description: >-
@@ -12117,8 +10806,6 @@ components:
         All other payment products do not support a descriptor.
       example: 22 character long desc
       maxLength: 256
-      deprecated: true
-      x-deprecated-by: softDescriptor
     operatorId:
       type: string
       description: >-
@@ -12227,12 +10914,6 @@ components:
         virtualCardIndicator:
           $ref: '#/components/schemas/virtualCardIndicator'
           description: Indicates whether the card is a virtual card
-        issuerPrincipalMemberCode:
-          $ref: '#/components/schemas/issuerPrincipalMemberCode'
-          description: Code that identifies the principal member within an issuer group
-        issuerPrincipalMemberName:
-          $ref: '#/components/schemas/issuerPrincipalMemberName'
-          description: Name that identifies the principal member within an issuer group
     cardCorporateIndicator:
       type: boolean
       description: Indicates whether the card is an Enterprise / Commercial card or not
@@ -12297,17 +10978,7 @@ components:
     issuerCode:
       type: string
       description: Issuer code of the card
-      example: "401200"
-      maxLength: 255
-    issuerPrincipalMemberCode:
-      type: string
-      description: Code that identifies the principal member within an issuer group
-      example: "30007"
-      maxLength: 255
-    issuerPrincipalMemberName:
-      type: string
-      description: Name that identifies the principal member within an issuer group
-      example: Natixis
+      example: 401200
       maxLength: 255
     issuerName:
       type: string
@@ -12333,15 +11004,15 @@ components:
           * `d` Europe
           * `e` Africa and Middle East
       enum:
-      - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
-      - "7"
-      - "8"
-      - "9"
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
       - a
       - b
       - c
@@ -12368,151 +11039,3 @@ components:
     virtualCardIndicator:
       type: boolean
       description: Indicates whether the card is a virtual card
-    acceptance:
-      type: object
-      description: This object contains the acceptance information for the card payment authorization.
-      properties:
-        authorizationDate:
-          type: string
-          format: date-time
-          description: It is the authorization processing date and time of the transaction.
-          example: 2019-08-24T14:15:22Z
-          pattern: ^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01][0-9]|2[0-3]):[0-5]\d:[0-5]\d)(\.\d+)?(([+-](\d{4}|(\d{2}\:\d{2})))|Z)?$
-        acceptanceSystemApplicationId:
-          type: string
-          description: Worldline application identifier used to transmit the authorization request. This data is transmitted as provided in the authorization request and in the response. It is named ITP (Terminal Application Identification at the Point of Acceptance) in the CB2A protocol.
-          example: "101762004001"
-          maxLength: 12
-    autoCapture:
-      type: object
-      description: Object containing the auto capture configuration for the payment.
-      properties:
-        delayInMinutes:
-          type: integer
-          format: int32
-          description: Delay in minutes between authorization and automatic capture for this request. Minimum value is 0 minutes, maximum value is 43200 minutes (30 days).
-          example: 60
-          maximum: 43200
-          minimum: 0
-      required:
-      - delayInMinutes
-    payoutCardPaymentMethodSpecificOutput:
-      type: object
-      description: Object containing the card payment method details in a Payout context
-      properties:
-        paymentProductId:
-          $ref: '#/components/schemas/paymentProductId'
-          description: Payment product identifier - Please see Products documentation for a full overview of possible values.
-        authorisationCode:
-          $ref: '#/components/schemas/authorisationCode'
-          description: Card Authorization code as returned by the acquirer
-        card:
-          $ref: '#/components/schemas/cardEssentials'
-          description: Object containing card details
-        acceptance:
-          $ref: '#/components/schemas/acceptance'
-          description: This object contains the acceptance information for the card payment authorization.
-  parameters:
-    merchantIdPath:
-      name: merchantId
-      in: path
-      description: The Merchant Id
-      schema:
-        type: string
-      required: true
-      maxLength: 30
-    paymentProductIdPath:
-      name: paymentProductId
-      in: path
-      description: The payment product identifier.
-      schema:
-        type: integer
-        format: int32
-      required: true
-    clientApiCustomerIdPath:
-      name: customerId
-      in: path
-      description: The session is built up around the customer in the form of the customerId. All client APIs use this customerId in the URI to identify the customer.
-      schema:
-        type: string
-      required: true
-    currencyCodeQueryRequired:
-      name: currencyCode
-      in: query
-      description: Three-letter ISO currency code representing the currency for the amount
-      schema:
-        type: string
-      required: true
-      maxLength: 3
-    countryCodeQueryRequired:
-      name: countryCode
-      in: query
-      description: ISO 3166-1 alpha-2 country code of the transaction
-      schema:
-        type: string
-      required: true
-      maxLength: 2
-    paymentProductIsRecurringQuery:
-      name: isRecurring
-      in: query
-      description: >-
-        This allows you to filter payment products based on their support for recurring payments.
-
-        * true - return only payment products that support recurring payments,
-
-        * false - return all payment products that support one-time transactions. Payment products that support recurring products are usually also part of this list.
-      schema:
-        type: boolean
-      maxLength: 5
-    amountQuery:
-      name: amount
-      in: query
-      description: Whole amount in cents (not containing any decimals)
-      schema:
-        type: integer
-        format: int64
-    localeQuery:
-      name: locale
-      in: query
-      description: Locale used in the GUI towards the consumer.
-      schema:
-        type: string
-    paymentProductOperationTypeQuery:
-      name: operationType
-      in: query
-      description: >-
-        This allows you to filter payment products based on the operation type. Allowed values:
-
-        * Authorization - The payment creation results in an authorization that is ready for capture. Final authorizations can't be reversed and need to be captured for the full amount within 7 days.
-
-        * Pre-authorization - The payment creation results in a pre-authorization that is ready for capture. Pre-authortizations can be reversed and can be captured within 30 days. The capture amount can be lower than the authorized amount.
-
-        * Sale - The payment creation results in an authorization that is already captured at the moment of approval.
-
-        * Payout - Payout service enables seamless direct money transfers to a chosen bank account.
-      schema:
-        type: string
-      required: false
-    paymentProductHideQuery:
-      name: hide
-      in: query
-      description: >-
-        Allows you to hide elements from the response, reducing the amount of data that needs to be returned to your client. Possible options are:
-
-        * fields - Do not return any data on fields of the payment product
-
-        * accountsOnFile - Do not return any accounts on file data
-
-        * translations - Do not return any label texts associated with the payment products
-
-        * productsWithoutFields - Do not return products that require any additional data to be captured
-
-        * productsWithoutInstructions - Do not return products that show instructions
-
-        * productsWithRedirects - Do not return products that require a redirect to a third party. Note that products that involve potential redirects related to 3D Secure authentication are not hidden
-      schema:
-        type: array
-        items:
-          type: string
-      style: form
-      explode: false
