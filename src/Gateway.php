@@ -130,11 +130,11 @@ final class Gateway extends PronamicGateway {
 						break;
 					case PaymentStatus::Captured:
 						$payment->set_status( PronamicStatus::SUCCESS );
-						
+
 						break;
 					case PaymentStatus::Refunded:
 						$payment->set_status( PronamicStatus::REFUNDED );
-						
+
 						break;
 					case PaymentStatus::AuthorizationRequested:
 					case PaymentStatus::CaptureRequested:
