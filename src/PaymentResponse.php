@@ -25,6 +25,13 @@ final class PaymentResponse {
 	public ?string $id = null;
 
 	/**
+	 * Payment status.
+	 *
+	 * @var null|PaymentStatus
+	 */
+	public ?PaymentStatus $status = null;
+
+	/**
 	 * From array.
 	 *
 	 * @param array<string, mixed> $data Data.
@@ -35,6 +42,10 @@ final class PaymentResponse {
 
 		if ( \array_key_exists( 'id', $data ) ) {
 			$response->id = $data['id'];
+		}
+
+		if ( \array_key_exists( 'status', $data ) && \is_string( $data['status'] ) ) {
+			$response->status = PaymentStatus::from( $data['status'] );
 		}
 
 		return $response;

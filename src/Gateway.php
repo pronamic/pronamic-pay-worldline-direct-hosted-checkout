@@ -118,16 +118,30 @@ final class Gateway extends PronamicGateway {
 			case HostedCheckoutStatus::PaymentCreated:
 				$payment->set_status( PronamicStatus::OPEN );
 
-				switch ( $response->created_payment_output?->payment_status_category ) {
-					case PaymentStatusCategory::Rejected:
-						$payment->set_status( PronamicStatus::EXPIRED );
+				switch ( $response->created_payment_output?->payment?->status ) {
+					case PaymentStatus::Cancelled:
+						$payment->set_status( PronamicStatus::CANCELLED );
 
 						break;
-					case PaymentStatusCategory::Successful:
+					case PaymentStatus::Rejected:
+					case PaymentStatus::RejectedCapture:
+						$payment->set_status( PronamicStatus::FAILURE );
+
+						break;
+					case PaymentStatus::Captured:
 						$payment->set_status( PronamicStatus::SUCCESS );
-
+						
 						break;
-					case PaymentStatusCategory::StatusUnknown:
+					case PaymentStatus::Refunded:
+						$payment->set_status( PronamicStatus::REFUNDED );
+						
+						break;
+					case PaymentStatus::AuthorizationRequested:
+					case PaymentStatus::CaptureRequested:
+					case PaymentStatus::Created:
+					case PaymentStatus::PendingCapture:
+					case PaymentStatus::Redirected:
+					case PaymentStatus::RefundRequested:
 						$payment->set_status( PronamicStatus::OPEN );
 
 						break;
