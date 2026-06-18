@@ -21,12 +21,32 @@ use WP_REST_Response;
  */
 class WebhookController {
 	/**
-	 * Setup.
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
+	private static ?self $instance = null;
+
+	/**
+	 * Private constructor to prevent direct instantiation.
 	 *
 	 * @return void
 	 */
-	public function setup() {
+	private function __construct() {
 		\add_action( 'rest_api_init', $this->rest_api_init( ... ) );
+	}
+
+	/**
+	 * Get singleton instance.
+	 *
+	 * @return self
+	 */
+	public static function get_instance(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	/**

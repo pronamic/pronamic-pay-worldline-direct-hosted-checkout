@@ -73,10 +73,7 @@ final class Integration extends AbstractGatewayIntegration {
 			return;
 		}
 
-		// Webhook controller.
-		$webhook_controller = new WebhookController();
-
-		$webhook_controller->setup();
+		WebhookController::get_instance();
 	}
 
 	/**
