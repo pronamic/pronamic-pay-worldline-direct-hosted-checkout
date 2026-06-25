@@ -68,11 +68,6 @@ final class Integration extends AbstractGatewayIntegration {
 	public function setup() {
 		\add_filter( 'pronamic_gateway_configuration_display_value_' . $this->get_id(), $this->gateway_configuration_display_value( ... ), 10, 2 );
 
-		// Check if dependencies are met and integration is active.
-		if ( ! $this->is_active() ) {
-			return;
-		}
-
 		WebhookController::get_instance();
 	}
 
