@@ -36,6 +36,7 @@ final class PaymentResponse {
 	 *
 	 * @param array<string, mixed> $data Data.
 	 * @return self
+	 * @throws \UnexpectedValueException Throws exception when payment status is not a string.
 	 */
 	public static function from_array( array $data ): self {
 		$response = new self();
@@ -44,7 +45,16 @@ final class PaymentResponse {
 			$response->id = $data['id'];
 		}
 
-		if ( \array_key_exists( 'status', $data ) && \is_string( $data['status'] ) ) {
+		if ( \array_key_exists( 'status', $data ) ) {
+			if ( ! \is_string( $data['status'] ) ) {
+				throw new \UnexpectedValueException(
+					\sprintf(
+						'Expected payment status to be a string, got %s.',
+						\get_debug_type( $data['status'] )
+					)
+				);
+			}
+
 			$response->status = PaymentStatus::from( $data['status'] );
 		}
 
