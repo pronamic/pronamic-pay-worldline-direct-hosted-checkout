@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-02
+
+### Fixed
+
+- Fix webhook initialisation. ([#17](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/511d892a874a4283da79646a46d36524c8d9523d))
+- Fix status updates using payment status instead of status category. ([#16](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/1415900cb80e67ae07620525fc01b65cbb34c0da))
+
+### Changes
+
+- Updated API documentation. ([5f2c60e](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/commit/5f2c60e70983918a63b188e313b3d7c1551f506d))
+
+Full set of changes: [`1.4.0...1.5.0`][1.5.0]
+
+[1.5.0]: https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/compare/v1.4.0...v1.5.0
+
 ## [1.4.0] - 2026-05-13
 
 ### Added
