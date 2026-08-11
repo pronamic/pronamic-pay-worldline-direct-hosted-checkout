@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-08-11
+
+### Changed
+
+- Set hosted checkout authorization mode to `SALE` to ensure immediate payment capture. ([#22](https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/pull/22))
+
+### Composer
+
+- Changed `wp-pay/core` from `v4.32.0` to `v4.34.0`.
+	- `v4.33.0`: Added `pronamic_pay_register_payment_methods` action; moved default payment method registration to plugin space; removed temporary iDEAL rebranding override. Release notes: https://github.com/pronamic/wp-pay-core/releases/tag/v4.33.0
+	- `v4.34.0`: Allow `woocommerce/action-scheduler ^4.0`; sync refunded amount currency with total amount when refunded amount is zero. Release notes: https://github.com/pronamic/wp-pay-core/releases/tag/v4.34.0
+
+Full set of changes: [`1.5.0...1.6.0`][1.6.0]
+
+[1.6.0]: https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/compare/v1.5.0...v1.6.0
+
 ## [1.5.0] - 2026-07-02
 
 ### Fixed
