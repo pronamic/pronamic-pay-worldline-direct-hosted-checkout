@@ -229,6 +229,9 @@ final class Client {
 		}
 
 		$data = [
+			'cardPaymentMethodSpecificInput' => [
+				'authorizationMode' => 'SALE',
+			],
 			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
 			'order'                       => $order,
 			'feedbacks'                   => [
