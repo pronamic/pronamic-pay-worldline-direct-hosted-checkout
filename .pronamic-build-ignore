@@ -82,6 +82,13 @@
 # WP-CLI (https://wp-cli.org/)
 /wp-cli.yml
 
+# AI
+/AGENTS.md
+/GEMINI.md
+
+# Rector
+/rector.php
+
 # Project
 /build/
 /tests/
