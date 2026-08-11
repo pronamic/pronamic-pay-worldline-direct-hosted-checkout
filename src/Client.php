@@ -232,9 +232,9 @@ final class Client {
 			'cardPaymentMethodSpecificInput' => [
 				'authorizationMode' => 'SALE',
 			],
-			'hostedCheckoutSpecificInput' => $hosted_checkout_specific_input,
-			'order'                       => $order,
-			'feedbacks'                   => [
+			'hostedCheckoutSpecificInput'    => $hosted_checkout_specific_input,
+			'order'                          => $order,
+			'feedbacks'                      => [
 				'webhooksUrls' => [
 					$this->get_webhook_url( $payment ),
 				],
