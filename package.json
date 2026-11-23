@@ -22,7 +22,7 @@
 		"url": "https://github.com/pronamic/pronamic-pay-worldline-direct-hosted-checkout/issues"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^11.12.0",
+		"@wordpress/env": "^12.2.0",
 		"@wordpress/scripts": "^37.2.0"
 	},
 	"scripts": {
